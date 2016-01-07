@@ -10,28 +10,24 @@ export default class InputGroup extends Component {
     };
 
     static propTypes = {
-        onChange: PropTypes.func,
-        onBlur: PropTypes.func,
-        onFocus: PropTypes.func
+        onChange: PropTypes.func
     };
 
     @autobind
     getFieldSchemas(){
-        let fields
-        
-        // if no tag is passed as prop, display the entire form
-        if(this.context.schema == null) {
-            return <div></div>
+        this.form = this.form || this.context.form
+        if(this.form.schema == null) {
+            return []
         }
+        // if no tag is passed as prop, display the entire form
         if(this.props.tag === undefined) {
-            return _.values(this.context.schema)
+            return _.values(this.form.schema)
         } 
-        else if(this.props.tag) {
-            fields = _.values(this.context.schema).filter((field) => {
+        if(this.props.tag) {
+            return _.values(this.form.schema).filter((field) => {
                 return field._tags.indexOf(this.props.tag) !== -1;
             })
         }
-        return fields
     }
     
     @autobind
@@ -40,30 +36,19 @@ export default class InputGroup extends Component {
             e.preventDefault();
         }
 
-        if(this.context.onChange) {
+        if(this.form.onChange) {
             var obj = {}
             obj[e.target.name] = e.target.value
-            this.context.onChange(e, obj);
-        }
-    }
-    
-    @autobind
-    onFocus(e) {
-        if(this.context.onFocus) {
-            context.onFocus(e);
-        }
-    }
-    
-    @autobind
-    onBlur(e) {
-        if(this.context.onBlur) {
-            context.onBlur(e);
+            this.form.onChange(e, obj);
         }
     }
 
     constructor(props){
         super(props)
-        this.form = this.context.form
+    }
+
+    componentWillReceiveProps(nextProps, nextContext){
+        this.form = nextContext.form
     }
 
     @autobind
@@ -99,13 +84,13 @@ export default class InputGroup extends Component {
             return `${fieldName} does not match the expected format as a Joi schmea object. A ValidatedForm must be passed in a valid schema that follows the format specified in the Readme.`
         }
         
-        if(!this.context[`${elementType}Element`]) {
+        if(!this.form[`${elementType}Element`]) {
             return `[JoifulReactForms Error] The requested input type of ${elementType} does not have a defined element type`
         }
 
         if(elementType === 'select') {
             if(!fieldSchema._valids || !fieldSchema._valids._set || !fieldSchema._valids._set.length === 0) {
-                return `Warning! ${fieldName} is a select component but no 'valid' params are provided. This field will be ignored.`
+                return `Warning! ${fieldName} is a select element but no 'valid' params are provided. This field will be ignored.`
             }
         }
     }
@@ -126,10 +111,10 @@ export default class InputGroup extends Component {
                     
                     let options = this.getFieldOptions(fieldSchema, elementType, fieldName)
 
-                    return this.context[`${elementType}Element`](this.context.getErrors(fieldName), this.context.getValue(fieldName), options, {
+                    return this.form[`${elementType}Element`](this.form.getErrors(fieldName), this.form.getValue(fieldName), options, {
                         onChange: this.onChange,
-                        onFocus: this.onFocus,
-                        onBlur: this.onBlur
+                        onFocus: this.form.onFocus,
+                        onBlur: this.form.onBlur
                     })
                 })}
             </div>

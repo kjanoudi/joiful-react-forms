@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import Joi from 'joi'
 import _ from 'lodash'
 import InputGroup from './InputGroup'
+import autobind from 'autobind-decorator'
 
 export default class ValidatedForm extends Component {
     static propTypes = {
@@ -10,11 +11,11 @@ export default class ValidatedForm extends Component {
         options: PropTypes.object,
         onSubmit: PropTypes.func,
         onChange: PropTypes.func,
-        textComponent: PropTypes.func,
-        selectComponent: PropTypes.func,
-        textAreaComponent: PropTypes.func,
-        radioComponent: PropTypes.func,
-        checkboxComponent: PropTypes.func
+        textElement: PropTypes.func,
+        selectElement: PropTypes.func,
+        textAreaElement: PropTypes.func,
+        radioElement: PropTypes.func,
+        checkboxElement: PropTypes.func
     };
 
     static childContextTypes = {
@@ -24,7 +25,7 @@ export default class ValidatedForm extends Component {
     static defaultProps = {
         values: {},
         options: {},
-        textComponent: (err, value, options, events) => {
+        textElement: (err, value, options, events) => {
             var key = options.key
             delete options.key
 
@@ -40,7 +41,7 @@ export default class ValidatedForm extends Component {
                 </div>
             )
         },
-        selectComponent: (err, value, options, events) => {
+        selectElement: (err, value, options, events) => {
             var enums = options.enums
             delete options.enums
             var key = options.key
@@ -60,7 +61,7 @@ export default class ValidatedForm extends Component {
                 </div>
             )
         },
-        textAreaComponent: (err, value, options, events) => {
+        textAreaElement: (err, value, options, events) => {
             var key = options.key
             delete options.key
 
@@ -75,7 +76,7 @@ export default class ValidatedForm extends Component {
                 </div>
             )
         },
-        checkboxComponent: (err, value, options, events) => {
+        checkboxElement: (err, value, options, events) => {
             options.type = 'checkbox'
             var key = options.key
             delete options.key
@@ -102,11 +103,11 @@ export default class ValidatedForm extends Component {
                 onChange: this.onChange,
                 onFocus: this.onFocus,
                 onBlur: this.onBlur,
-                textComponent: this.props.textComponent,
-                selectComponent: this.props.selectComponent,
-                textAreaComponent: this.props.textAreaComponent,
-                radioComponent: this.props.radioComponent,
-                checkboxComponent: this.props.checkboxComponent
+                textElement: this.props.textElement,
+                selectElement: this.props.selectElement,
+                textAreaElement: this.props.textAreaElement,
+                radioElement: this.props.radioElement,
+                checkboxElement: this.props.checkboxElement
             }
         }
     }
@@ -116,6 +117,7 @@ export default class ValidatedForm extends Component {
         this.state = this.getStateFromProps(props)
     }
 
+    @autobind
     getStateFromProps(props){
         var state = {
             schema: {},
@@ -126,7 +128,7 @@ export default class ValidatedForm extends Component {
         if(props.schema) {
             _.forOwn(props.schema, (fieldSchema, name) => { 
                 state.schema[name] = fieldSchema
-                fieldSchema._joinedMetaData = _.assign.apply(this, fieldSchema._meta)
+                fieldSchema._joinedMetaData = _.assign.apply(this, fieldSchema._meta) || {}
                 fieldSchema._joinedMetaData.name = name
                 fieldSchema._tags = _.uniq(_.flatten(_.toArray(fieldSchema._tags).concat(name)))
                 state.keyMap[fieldSchema._settings.language.label] = name
@@ -179,6 +181,7 @@ export default class ValidatedForm extends Component {
         })
     }
 
+    @autobind
     submit(e) {
         if(!this.props.onSubmit) return
 
@@ -200,26 +203,31 @@ export default class ValidatedForm extends Component {
         })
     }
 
+    @autobind
     valid(){
         return _.isEmpty(this.state.errors)
     }
 
+    @autobind
     getErrors(fieldName) {
         if(fieldName && this.state.errors) {
             return this.state.errors[fieldName]
         }
     }
     
+    @autobind
     getValue(fieldName) {
         if(fieldName && this.state.values) {
             return this.state.values[fieldName]
         }
     }
 
+    @autobind
     getAllErrors(){
         return this.state.errors
     }
 
+    @autobind
     onChange(e, values) {
         var name = e.target.name
         var value = e.target.value
@@ -268,12 +276,14 @@ export default class ValidatedForm extends Component {
 
     }
 
+    @autobind
     onFocus(e) {
         if(this.props.onFocus) {
             this.props.onFocus(e)
         }
     }
 
+    @autobind
     onBlur(e) {
         var value = e.target.value
         var name = e.target.name
