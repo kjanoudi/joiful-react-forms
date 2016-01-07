@@ -1,0 +1,52 @@
+{
+  "name": "joiful-react-forms",
+  "version": "0.0.1",
+  "description": "Automatically generate validated React forms using Joi",
+  "main": "lib/index.js",
+  "peerDependencies": {
+    "react": ">=0.13.0"
+  },
+  "keywords": [
+    "react",
+    "joi",
+    "react-component",
+    "form"
+  ],
+  "babel": {
+    "plugins": [
+      "transform-es2015-modules-commonjs",
+      "transform-decorators-legacy"
+    ],
+    "presets": [
+      "react",
+      "es2015",
+      "stage-1"
+    ]
+  },
+  "scripts": {
+    "prebuild": "rm -rf lib && rm -rf build",
+    "build": "babel -d lib/ src/",
+    "prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "autobind-decorator": "^1.3.2",
+    "babel-cli": "^6.2.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-1": "^6.3.13",
+    "lodash": "^3.10.1",
+    "react": "^0.14.5",
+    "react-dom": "^0.14.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kjanoudi/joiful-react-forms"
+  },
+  "author": "Kareem Janoudi",
+  "license": "MIT",
+  "dependencies": {
+    "joi": "^7.1.0",
+    "react-tap-event-plugin": "^0.2.1"
+  }
+}
