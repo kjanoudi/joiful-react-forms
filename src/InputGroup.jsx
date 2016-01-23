@@ -84,7 +84,7 @@ export default class InputGroup extends Component {
             return `${fieldName} does not match the expected format as a Joi schmea object. A ValidatedForm must be passed in a valid schema that follows the format specified in the Readme.`
         }
         
-        if(!this.form[`${elementType}Element`]) {
+        if(!this.form.inputElementTypes[`${elementType}Element`]) {
             return `[JoifulReactForms Error] The requested input type of ${elementType} does not have a defined element type`
         }
 
@@ -111,7 +111,7 @@ export default class InputGroup extends Component {
                     
                     let options = this.getFieldOptions(fieldSchema, elementType, fieldName)
 
-                    return this.form[`${elementType}Element`](this.form.getErrors(fieldName), this.form.getValue(fieldName), options, {
+                    return this.form.inputElementTypes[`${elementType}Element`](this.form.getErrors(fieldName), this.form.getValue(fieldName), options, {
                         onChange: this.onChange,
                         onFocus: this.form.onFocus,
                         onBlur: this.form.onBlur

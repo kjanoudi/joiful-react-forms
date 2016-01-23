@@ -11,11 +11,7 @@ export default class ValidatedForm extends Component {
         options: PropTypes.object,
         onSubmit: PropTypes.func,
         onChange: PropTypes.func,
-        textElement: PropTypes.func,
-        selectElement: PropTypes.func,
-        textAreaElement: PropTypes.func,
-        radioElement: PropTypes.func,
-        checkboxElement: PropTypes.func
+        customInputElementTypes: PropTypes.object
     };
 
     static childContextTypes = {
@@ -25,73 +21,7 @@ export default class ValidatedForm extends Component {
     static defaultProps = {
         values: {},
         options: {},
-        textElement: (err, value, options, events) => {
-            var key = options.key
-            delete options.key
-
-            return (
-                <div key={key} className={err ? 'input-error' : 'input-no-error'}>
-                    {err}
-                    <input {...options}
-                           type={options.type}
-                           value={value}
-                           onChange={events.onChange}
-                           onFocus={events.onFocus}
-                           onBlur={events.onBlur} />
-                </div>
-            )
-        },
-        selectElement: (err, value, options, events) => {
-            var enums = options.enums
-            delete options.enums
-            var key = options.key
-            delete options.key
-
-            return (
-                <div key={key} className={err ? 'input-error' : 'input'}>
-                    {err}
-                    <select value={value} {...options}>
-                        {Object.keys(enums).map((option) => {
-                            return (
-                                <option key={option} value={option}>{enums[option]}</option>
-                            )
-
-                        })}
-                    </select>
-                </div>
-            )
-        },
-        textAreaElement: (err, value, options, events) => {
-            var key = options.key
-            delete options.key
-
-            return (
-                <div key={key} className={err ? 'input-error' : 'input'}>
-                    {err}
-                    <textarea {...options}
-                              value={value}
-                              onChange={events.onChange}
-                              onFocus={events.onFocus}
-                              onBlur={events.onBlur} ></textarea>
-                </div>
-            )
-        },
-        checkboxElement: (err, value, options, events) => {
-            options.type = 'checkbox'
-            var key = options.key
-            delete options.key
-
-            return (
-                <div key={key} className={err ? 'input-error' : 'input'}>
-                    {err}
-                    <input {...options}
-                           value={value}
-                           onChange={events.onChange}
-                           onFocus={events.onFocus}
-                           onBlur={events.onBlur} />
-                </div>
-            )
-        }
+        customInputElementTypes: {}
     };
 
     getChildContext() {
@@ -103,17 +33,14 @@ export default class ValidatedForm extends Component {
                 onChange: this.onChange,
                 onFocus: this.onFocus,
                 onBlur: this.onBlur,
-                textElement: this.props.textElement,
-                selectElement: this.props.selectElement,
-                textAreaElement: this.props.textAreaElement,
-                radioElement: this.props.radioElement,
-                checkboxElement: this.props.checkboxElement
+                inputElementTypes: this.inputElementTypes
             }
         }
     }
 
     constructor(props){
         super(props)
+        this.inputElementTypes = this.getInputElementTypes(this.props.customInputElementTypes)
         this.state = this.getStateFromProps(props)
     }
 
@@ -150,10 +77,84 @@ export default class ValidatedForm extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        this.inputElementTypes = this.getInputElementTypes(nextProps.customInputElementTypes)
         var nextState = this.getStateFromProps(nextProps)
         this.setState({
             ...nextState
         })
+    }
+
+    getInputElementTypes(customInputElementTypes){
+        let defaultInputElementTypes = {
+            textElement: (err, value, options, events) => {
+                var key = options.key
+                delete options.key
+
+                return (
+                    <div key={key} className={err ? 'input-error' : 'input-no-error'}>
+                        {err}
+                        <input {...options}
+                               type={options.type}
+                               value={value}
+                               onChange={events.onChange}
+                               onFocus={events.onFocus}
+                               onBlur={events.onBlur} />
+                    </div>
+                )
+            },
+            selectElement: (err, value, options, events) => {
+                var enums = options.enums
+                delete options.enums
+                var key = options.key
+                delete options.key
+
+                return (
+                    <div key={key} className={err ? 'input-error' : 'input'}>
+                        {err}
+                        <select value={value} {...options}>
+                            {Object.keys(enums).map((option) => {
+                                return (
+                                    <option key={option} value={option}>{enums[option]}</option>
+                                )
+
+                            })}
+                        </select>
+                    </div>
+                )
+            },
+            textAreaElement: (err, value, options, events) => {
+                var key = options.key
+                delete options.key
+
+                return (
+                    <div key={key} className={err ? 'input-error' : 'input'}>
+                        {err}
+                        <textarea {...options}
+                                  value={value}
+                                  onChange={events.onChange}
+                                  onFocus={events.onFocus}
+                                  onBlur={events.onBlur} ></textarea>
+                    </div>
+                )
+            },
+            checkboxElement: (err, value, options, events) => {
+                options.type = 'checkbox'
+                var key = options.key
+                delete options.key
+
+                return (
+                    <div key={key} className={err ? 'input-error' : 'input'}>
+                        {err}
+                        <input {...options}
+                               value={value}
+                               onChange={events.onChange}
+                               onFocus={events.onFocus}
+                               onBlur={events.onBlur} />
+                    </div>
+                )
+            }
+        }
+        return _.assign(defaultInputElementTypes, customInputElementTypes)
     }
 
     render() {
