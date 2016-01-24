@@ -173,16 +173,6 @@ export default class ValidatedForm extends Component {
         )
     }
 
-    validate(joiOptions, values, fields, validCallback, errorCallback){
-        Joi.validate(values, fields, _.assign(this.props.options, joiOptions), (err, value) => {
-            if(err) {
-                var formErrors = _.object(_.pluck(err.details, 'path'), _.pluck(err.details, 'message'))
-                return errorCallback(formErrors)
-            }
-            return validCallback(values)
-        })
-    }
-
     @autobind
     submit(e) {
         if(!this.props.onSubmit) return
