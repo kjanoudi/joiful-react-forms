@@ -58,7 +58,7 @@ export default class ValidatedForm extends Component {
                 fieldSchema._joinedMetaData = _.assign.apply(this, fieldSchema._meta) || {}
                 fieldSchema._joinedMetaData.name = name
                 fieldSchema._tags = _.uniq(_.flatten(_.toArray(fieldSchema._tags).concat(name)))
-                if(!fieldSchema._settings) fieldSchema._settings = { language: {label: name} }
+                fieldSchema._settings = _.defaultsDeep(fieldSchema._settings, { language: { label: _.startCase(name) } })
                 state.keyMap[fieldSchema._settings.language.label] = name
                 state.values[name] = (props.values && props.values[name]) ? props.values[name] : fieldSchema._flags.default
                 if(state.values[name] === undefined && fieldSchema._type === 'boolean') {
