@@ -110,7 +110,7 @@ export default class InputElement extends Component {
         let optionsOverwrites = _.pick(this.props.inputProps, _.keys(options))
         //now overwrite options that are passed in as inputProps
         options = _.assign(options, optionsOverwrites)
-        options.inputProps = inputProps
+        options.inputProps = inputProps || {}
 
         return this.form.inputElementTypes[`${elementType}Element`](this.form.getErrors(fieldName), this.form.getValue(fieldName), options, {
             onChange: this.onChange,
