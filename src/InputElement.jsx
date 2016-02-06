@@ -32,13 +32,15 @@ export default class InputElement extends Component {
     @autobind
     onChange(e) {
         if(e.preventDefault) {
-            e.preventDefault();
+            e.preventDefault()
         }
-
+        if(this.props.onChange) {
+            this.props.onChange(e)
+        }
         if(this.form.onChange) {
             var obj = {}
             obj[e.target.name] = e.target.value
-            this.form.onChange(e, obj);
+            this.form.onChange(e, obj)
         }
     }
 

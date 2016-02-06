@@ -87,40 +87,8 @@ export default class ValidatedForm extends Component {
     getInputElementTypes(customInputElementTypes){
         let defaultInputElementTypes = {
             textElement: (err, value, options, events) => {
-                var key = options.key
-                delete options.key
-
-                return (
-                    <div key={key} className={err ? 'input-error' : 'input-no-error'}>
-                        {err}
-                        <input {...options}
-                               type={options.type}
-                               value={value}
-                               onChange={events.onChange}
-                               onFocus={events.onFocus}
-                               onBlur={events.onBlur} />
-                    </div>
-                )
             },
             selectElement: (err, value, options, events) => {
-                var enums = options.enums
-                delete options.enums
-                var key = options.key
-                delete options.key
-
-                return (
-                    <div key={key} className={err ? 'input-error' : 'input'}>
-                        {err}
-                        <select value={value} {...options}>
-                            {Object.keys(enums).map((option) => {
-                                return (
-                                    <option key={option} value={option}>{enums[option]}</option>
-                                )
-
-                            })}
-                        </select>
-                    </div>
-                )
             },
             textAreaElement: (err, value, options, events) => {
                 var key = options.key
