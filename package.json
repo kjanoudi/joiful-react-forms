@@ -1,6 +1,6 @@
 {
   "name": "joiful-react-forms",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Automatically generate validated React forms using Joi",
   "main": "lib/index.js",
   "peerDependencies": {
@@ -47,7 +47,7 @@
   "author": "Kareem Janoudi",
   "license": "MIT",
   "dependencies": {
-    "joi": "^7.2.0",
+    "joi": "^8.0.0",
     "react-tap-event-plugin": "^0.2.1"
   }
 }
