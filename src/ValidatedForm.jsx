@@ -190,7 +190,7 @@ export default class ValidatedForm extends Component {
     @autobind
     onChange(e, values) {
         var name = e.target.name
-        var value = e.target.value
+        var value = e.target.checked || e.target.value
 
         var newState = {
             values: {
