@@ -39,7 +39,7 @@ export default class InputElement extends Component {
         }
         if(this.form.onChange) {
             var obj = {}
-            obj[e.target.name] = e.target.value
+            obj[e.target.name] = e.target.checked || e.target.value
             this.form.onChange(e, obj)
         }
     }
