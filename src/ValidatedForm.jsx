@@ -145,22 +145,30 @@ export default class ValidatedForm extends Component {
     submit(e) {
         if(!this.props.onSubmit) return
 
-        Joi.validate(this.state.values, this.state.schema, _.assign(this.props.options, {abortEarly: false}), (err, value) => {
-            e.preventDefault()
-            if(err) {
-                var formErrors= {}
-                err.details.forEach((inputError) => {
-                    formErrors[inputError.path] = inputError.message
-                })
-                this.setState({
-                    errors: formErrors
-                }, () => {
-                    this.props.onSubmit(formErrors, this.state.values, null)
-                })
-                return
+        Joi.validate(
+            this.state.values, 
+            this.state.schema, 
+            _.assign(this.props.options, {
+                abortEarly: false,
+                context: this.state.values
+            }),
+            (err, value) => {
+                e.preventDefault()
+                if(err) {
+                    var formErrors= {}
+                    err.details.forEach((inputError) => {
+                        formErrors[inputError.path] = inputError.message
+                    })
+                    this.setState({
+                        errors: formErrors
+                    }, () => {
+                        this.props.onSubmit(formErrors, this.state.values, null)
+                    })
+                    return
+                }
+                this.props.onSubmit(null, this.state.values, e)
             }
-            this.props.onSubmit(null, this.state.values, e)
-        })
+        )
     }
 
     @autobind
@@ -200,7 +208,7 @@ export default class ValidatedForm extends Component {
         }
 
         if(this.state.errors && this.state.errors[name]) {
-            Joi.validate(value, this.state.schema[name], this.props.options, (err, value) => {
+            Joi.validate(value, this.state.schema[name], _.assign(this.props.options, { context: newState.values }), (err, value) => {
                 if(err) {
                     var formErrors= {}
                     err.details.forEach((inputError) => {
@@ -256,7 +264,7 @@ export default class ValidatedForm extends Component {
             return
         }
 
-        Joi.validate(value, this.state.schema[name], this.props.options, (err, value) => {
+        Joi.validate(value, this.state.schema[name], _.assign(this.props.options, { context: this.state.values }), (err, value) => {
             if(err) {
                 var formErrors= {}
                 err.details.forEach((inputError) => {
