@@ -7,6 +7,7 @@ import autobind from 'autobind-decorator'
 export default class ValidatedForm extends Component {
     static propTypes = {
         schema: PropTypes.object.isRequired,
+        errors: PropTypes.object,
         values: PropTypes.object,
         options: PropTypes.object,
         onSubmit: PropTypes.func,
@@ -19,6 +20,7 @@ export default class ValidatedForm extends Component {
     };
 
     static defaultProps = {
+        errors: {},
         values: {},
         options: {},
         customInputElementTypes: {}
@@ -178,7 +180,8 @@ export default class ValidatedForm extends Component {
 
     @autobind
     getErrors(fieldName) {
-        if(fieldName && this.state.errors) {
+        const errors = _.assign(this.state.errors || {}, this.props.errors)
+        if(fieldName && !_.isEmpty(errors)) {
             return this.state.errors[fieldName]
         }
     }
@@ -192,7 +195,8 @@ export default class ValidatedForm extends Component {
 
     @autobind
     getAllErrors(){
-        return this.state.errors
+        const errors = _.assign(this.state.errors || {}, this.props.errors)
+        return _.isEmpty(errors) ? null : errors
     }
 
     @autobind
