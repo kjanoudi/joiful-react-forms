@@ -182,7 +182,7 @@ export default class ValidatedForm extends Component {
     getErrors(fieldName) {
         const errors = _.assign(this.state.errors || {}, this.props.errors)
         if(fieldName && !_.isEmpty(errors)) {
-            return this.state.errors[fieldName]
+            return errors[fieldName]
         }
     }
     
