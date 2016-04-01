@@ -41,7 +41,7 @@ export default class InputGroup extends Component {
         return (
             <div>
                 {_.values(this.getFieldSchemas()).map((fieldSchema) => {
-                    const elementType = fieldSchema._joinedMetaData.elementType || 'text'
+                    let elementType = fieldSchema._joinedMetaData.elementType || 'text'
                     return 
                         <InputElement fieldName={fieldSchema._joinedMetaData.name}
                             elementType={elementType}
