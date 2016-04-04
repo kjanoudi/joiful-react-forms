@@ -1,6 +1,6 @@
 {
   "name": "joiful-react-forms",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "description": "Automatically generate validated React forms using Joi",
   "main": "lib/index.js",
   "peerDependencies": {
@@ -24,7 +24,8 @@
     ]
   },
   "scripts": {
-    "prebuild": "rm -rf lib && rm -rf build",
+    "lint": "eslint src/**",
+    "prebuild": "npm run lint && rm -rf lib && rm -rf build",
     "build": "babel -d lib/ src/",
     "prepublish": "npm run build"
   },
@@ -47,6 +48,12 @@
   "author": "Kareem Janoudi",
   "license": "MIT",
   "dependencies": {
+    "babel-eslint": "^6.0.2",
+    "eslint": "^2.6.0",
+    "eslint-config-airbnb": "^6.2.0",
+    "eslint-plugin-import": "^1.4.0",
+    "eslint-plugin-jsx-control-statements": "^1.1.0",
+    "eslint-plugin-react": "^4.2.3",
     "joi": "^8.0.5",
     "react-tap-event-plugin": "^0.2.2"
   }
