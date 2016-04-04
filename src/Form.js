@@ -74,7 +74,7 @@ export default class JoifulForm extends Component {
 
     @autobind
     getErrors(fieldName) {
-        const errors = _.assign(this.state.errors || {}, this.props.errors)
+        const errors = _.assign(this.state.errors || {}, this.state.propErrors)
         if (fieldName && !_.isEmpty(errors)) {
             return errors[fieldName]
         }
@@ -122,7 +122,7 @@ export default class JoifulForm extends Component {
 
     @autobind
     getAllErrors() {
-        const errors = _.assign(this.state.errors || {}, this.props.errors)
+        const errors = _.assign(this.state.errors || {}, this.state.propErrors)
         return _.isEmpty(errors) ? null : errors
     }
 
@@ -222,6 +222,7 @@ export default class JoifulForm extends Component {
     getStateFromProps(props) {
         const state = {
             schema: {},
+            propErrors: props.errors,
             keyMap: {},
             values: props.values
         }
