@@ -50,6 +50,7 @@ export default class ValidatedForm extends Component {
     getStateFromProps(props){
         var state = {
             schema: {},
+            propErrors: props.errors,
             keyMap: {},
             values: props.values
         }
@@ -68,6 +69,7 @@ export default class ValidatedForm extends Component {
                 }
             })
         }
+
         return state
     }
 
@@ -180,7 +182,7 @@ export default class ValidatedForm extends Component {
 
     @autobind
     getErrors(fieldName) {
-        const errors = _.assign(this.state.errors || {}, this.props.errors)
+        const errors = _.assign(this.state.errors || {}, this.state.propErrors)
         if(fieldName && !_.isEmpty(errors)) {
             return errors[fieldName]
         }
@@ -195,7 +197,7 @@ export default class ValidatedForm extends Component {
 
     @autobind
     getAllErrors(){
-        const errors = _.assign(this.state.errors || {}, this.props.errors)
+        const errors = _.assign(this.state.errors || {}, this.state.propErrors)
         return _.isEmpty(errors) ? null : errors
     }
 
