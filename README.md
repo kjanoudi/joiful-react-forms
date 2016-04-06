@@ -12,17 +12,15 @@ const MyValidatedForm = () =>
     <JoifulForm
         onSubmit={handleSubmit}
         schema={{
-            name: Joi.string().required().label('Name'),
-            email: Joi.string().email().required().label('Email'),
-            phone: Joi.string().min(10).max(12).label('Phone')
+            name: Joi.string().required(),
+            email: Joi.string().email().required(),
+            phone: Joi.string().min(10).max(12)
         }}
     >
         <JoifulInput name="name"/>
         <JoifulInput name="email"/>
         <JoifulInput name="phone"/>
     </JoifulForm>
-
-export MyValidatedForm
 
 ```
 
@@ -49,19 +47,25 @@ const FormUsingMyInputs = () =>
         }}
         onSubmit={handleSubmit}
         schema={{
-            name: Joi.string().required().label('Name'),
-            email: Joi.string().email().required().label('Email'),
-            phone: Joi.string().min(10).max(12).label('Phone')
+            name: Joi.string().required(),
+            email: Joi.string().email().required(),
+            phone: Joi.string().min(10).max(12)
         }}
     >
         <JoifulInput
             is="text"
             name="name"
+            placeholder="Name"
         />
-        <JoifulInput name="email"/>
-        <JoifulInput name="phone"/>
+        <JoifulInput
+            name="email"
+            type="email"
+            placeholder="Email"
+        />
+        <JoifulInput
+            name="phone"
+            placeholder="Phone"
+        />
     </JoifulForm>
-
-export FormUsingMyInputs
 
 ```
