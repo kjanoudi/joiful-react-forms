@@ -1,3 +1,2 @@
-export ValidatedForm from './ValidatedForm';
-export InputGroup from './InputGroup';
-export InputElement from './InputElement'
+export JoifulInput from './Input'
+export JoifulForm from './Form'
