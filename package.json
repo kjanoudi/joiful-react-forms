@@ -1,6 +1,6 @@
 {
   "name": "joiful-react-forms",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Automatically generate validated React forms using Joi",
   "main": "lib/index.js",
   "peerDependencies": {
