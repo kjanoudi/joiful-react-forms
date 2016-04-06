@@ -1,5 +1,5 @@
 import React from 'react'
-import Container from './_Container'
+import Container from '.'
 
 const JoifulDefaultCheckbox = (props) =>
     <Container {...props}>
