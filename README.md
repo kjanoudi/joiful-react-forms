@@ -13,8 +13,8 @@ const MyValidatedForm = () =>
         onSubmit={handleSubmit}
         schema={{
             name: Joi.string().required().label('Name'),
-            email: Joi.string().required().label('Email'),
-            phone: Joi.string().label('Phone')
+            email: Joi.string().email().required().label('Email'),
+            phone: Joi.string().min(10).max(12).label('Phone')
         }}
     >
         <JoifulInput name="name"/>
@@ -27,18 +27,31 @@ export MyValidatedForm
 ```
 
 ## Advanced Usage
+
+### Try it with your own inputs
 ```
 import Joi from 'joi'
 import { JoifulForm, JoifulInput } from 'joiful-react-forms'
 
-const MyCustomValidatedForm = () =>
+const MyTextInput = ({ error, ...props }) =>
+    <div>
+        <input {...props}/>
+        {error}
+    </div>
+
+
+const FormUsingMyInputs = () =>
     <JoifulForm
-        customElements={}
+        elementTypes={{
+            text: MyTextInput,
+            select: ...,
+            textarea: ...
+        }}
         onSubmit={handleSubmit}
         schema={{
             name: Joi.string().required().label('Name'),
-            email: Joi.string().required().label('Email'),
-            phone: Joi.string().label('Phone')
+            email: Joi.string().email().required().label('Email'),
+            phone: Joi.string().min(10).max(12).label('Phone')
         }}
     >
         <JoifulInput name="name"/>
@@ -46,6 +59,6 @@ const MyCustomValidatedForm = () =>
         <JoifulInput name="phone"/>
     </JoifulForm>
 
-export MyValidatedForm
+export FormUsingMyInputs
 
 ```

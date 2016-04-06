@@ -86,7 +86,7 @@ export default class JoifulInput extends Component {
             return `${name} does not match the expected format as a Joi schmea object. A ValidatedForm must be passed in a valid schema that follows the format specified in the Readme.` // eslint-disable-line max-len
         }
 
-        if (!this.form.inputElementTypes[`${elementType}Element`]) {
+        if (!this.form.inputElementTypes[elementType]) {
             return `[JoifulReactForms Error] The requested input type of ${elementType} does not have a defined element type` // eslint-disable-line max-len
         }
 
@@ -116,7 +116,7 @@ export default class JoifulInput extends Component {
 
         const defaults = this.fieldDefaults(fieldSchema, elementIs)
 
-        return createElement(this.form.inputElementTypes[`${elementIs}Element`], {
+        return createElement(this.form.inputElementTypes[elementIs], {
             ...defaults,
             ...props,
             error: this.form.getErrors(name),

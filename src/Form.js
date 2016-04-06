@@ -66,10 +66,10 @@ export default class JoifulForm extends Component {
 
     getInputElementTypes(customElements) {
         const defaultInputElementTypes = {
-            textElement: DefaultTextInput,
-            selectElement: () => {},
-            textAreaElement: DefaultTextarea,
-            checkboxElement: DefaultCheckbox
+            text: DefaultTextInput,
+            select: () => {},
+            textarea: DefaultTextarea,
+            checkbox: DefaultCheckbox
         }
         return _.assign(defaultInputElementTypes, customElements)
     }
