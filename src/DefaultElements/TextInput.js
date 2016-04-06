@@ -1,12 +1,13 @@
 import React from 'react'
 import Container from './_Container'
 
-const JoifulReactFormsTextarea = (props) =>
+const JoifulDefaultTextInput = (props) =>
     <Container {...props}>
-        <textarea
+        <input
             className="joiful-react-forms"
+            type="text"
             {...props}
         />
     </Container>
 
-export default JoifulReactFormsTextarea
+export default JoifulDefaultTextInput

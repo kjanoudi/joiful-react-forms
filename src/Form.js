@@ -1,17 +1,19 @@
 import React, { Component, PropTypes } from 'react'
 import Joi from 'joi'
 import _ from 'lodash'
-import DefaultInputs from './_DefaultInputs'
-import DefaultCheckbox from './_Checkbox'
-import DefaultTextarea from './_Textarea'
-import DefaultTextInput from './_TextInput'
+import {
+    Checkbox as DefaultCheckbox,
+    DefaultInputGroup,
+    Textarea as DefaultTextarea,
+    TextInput as DefaultTextInput
+  } from './DefaultElements'
 import autobind from 'autobind-decorator'
 
 export default class JoifulForm extends Component {
 
     static propTypes = {
         children: PropTypes.node,
-        customInputElementTypes: PropTypes.object,
+        customElements: PropTypes.object,
         errors: PropTypes.object,
         onBlur: PropTypes.func,
         onChange: PropTypes.func,
@@ -30,12 +32,12 @@ export default class JoifulForm extends Component {
         errors: {},
         options: {},
         values: {},
-        customInputElementTypes: {}
+        customElements: {}
     };
 
     constructor(props) {
         super(props)
-        this.inputElementTypes = this.getInputElementTypes(this.props.customInputElementTypes)
+        this.inputElementTypes = this.getInputElementTypes(this.props.customElements)
         this.state = this.getStateFromProps(props)
     }
 
@@ -58,18 +60,18 @@ export default class JoifulForm extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.inputElementTypes = this.getInputElementTypes(nextProps.customInputElementTypes)
+        this.inputElementTypes = this.getInputElementTypes(nextProps.customElements)
         this.setState(this.getStateFromProps(nextProps))
     }
 
-    getInputElementTypes(customInputElementTypes) {
+    getInputElementTypes(customElements) {
         const defaultInputElementTypes = {
             textElement: DefaultTextInput,
             selectElement: () => {},
             textAreaElement: DefaultTextarea,
             checkboxElement: DefaultCheckbox
         }
-        return _.assign(defaultInputElementTypes, customInputElementTypes)
+        return _.assign(defaultInputElementTypes, customElements)
     }
 
     @autobind
@@ -267,7 +269,7 @@ export default class JoifulForm extends Component {
 
         return (
             <form onSubmit={submit}>
-                <DefaultInputs/>
+                <DefaultInputGroup/>
             </form>
         )
     }

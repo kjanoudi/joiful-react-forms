@@ -1,13 +1,12 @@
 import React from 'react'
 import Container from './_Container'
 
-const JoifulReactFormsCheckbox = (props) =>
+const JoifulDefaultTextarea = (props) =>
     <Container {...props}>
-        <input
+        <textarea
             className="joiful-react-forms"
-            type="checkbox"
             {...props}
         />
     </Container>
 
-export default JoifulReactFormsCheckbox
+export default JoifulDefaultTextarea

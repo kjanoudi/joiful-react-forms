@@ -3,7 +3,7 @@ import _ from 'lodash'
 import autobind from 'autobind-decorator'
 import Input from './Input'
 
-export default class JoifulReactFormsDefaultInputs extends Component {
+export default class JoifulDefaultInputGroup extends Component {
 
     static contextTypes = {
         form: PropTypes.object.isRequired
