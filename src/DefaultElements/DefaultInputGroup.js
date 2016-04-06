@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import _ from 'lodash'
 import autobind from 'autobind-decorator'
-import Input from './Input'
+import Input from '../Input'
 
 export default class JoifulDefaultInputGroup extends Component {
 
