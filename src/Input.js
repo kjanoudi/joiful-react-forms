@@ -9,14 +9,15 @@ export default class JoifulInput extends Component {
     };
 
     static propTypes = {
-        elementType: PropTypes.string.isRequired,
-        fieldName: PropTypes.string.isRequired,
+        elementType: PropTypes.string,
         inputProps: PropTypes.object,
+        is: PropTypes.string,
+        name: PropTypes.string.isRequired,
         onChange: PropTypes.func
     };
 
     static defaultProps = {
-        elementType: 'text'
+        is: 'text'
     };
 
     componentWillReceiveProps(nextProps, { form }) {
@@ -47,18 +48,16 @@ export default class JoifulInput extends Component {
         if (this.form.schema === null) {
             return null
         }
-        return this.form.schema[this.props.fieldName]
+        return this.form.schema[this.props.name]
     }
 
     @autobind
-    getFieldOptions(fieldSchema, elementType, fieldName) {
-        const options = {
+    fieldDefaults(fieldSchema, elementType) {
+        const defaults = {
             ...fieldSchema._joinedMetaData,
             required: fieldSchema._flags.presence === 'required',
-            name: fieldName,
-            label: fieldSchema._settings.language.label,
-            key: fieldName,
-            default: fieldSchema._flags ? fieldSchema._flags.default : undefined
+            label: fieldSchema._settings.language.label
+            // default: fieldSchema._flags ? fieldSchema._flags.default : undefined
         }
 
         if (fieldSchema._valids
@@ -66,25 +65,25 @@ export default class JoifulInput extends Component {
             && fieldSchema._valids._set.length > 0) {
             const optionValues = fieldSchema._joinedMetaData.names || fieldSchema._valids._set
             const optionNames = fieldSchema._valids._set
-            options.enums = _.zipObject(optionNames, optionValues)
-            options.allowed = optionValues
+            defaults.enums = _.zipObject(optionNames, optionValues)
+            defaults.allowed = optionValues
         }
 
         switch (elementType) {
         case 'text':
-            options.placeholder = fieldSchema._examples[0] || undefined
+            defaults.placeholder = fieldSchema._examples[0] || undefined
             break
         default:
             break
         }
 
-        return options
+        return defaults
     }
 
     @autobind
-    validateFieldSchema(fieldSchema, elementType, fieldName) {
+    validateFieldSchema(fieldSchema, elementType, name) {
         if (!fieldSchema.isJoi) {
-            return `${fieldName} does not match the expected format as a Joi schmea object. A ValidatedForm must be passed in a valid schema that follows the format specified in the Readme.` // eslint-disable-line max-len
+            return `${name} does not match the expected format as a Joi schmea object. A ValidatedForm must be passed in a valid schema that follows the format specified in the Readme.` // eslint-disable-line max-len
         }
 
         if (!this.form.inputElementTypes[`${elementType}Element`]) {
@@ -95,7 +94,7 @@ export default class JoifulInput extends Component {
             if (!fieldSchema._valids
                 || !fieldSchema._valids._set
                 || !fieldSchema._valids._set.length === 0) {
-                return `Warning! ${fieldName} is a select element but no 'valid' params are provided. This field will be ignored.` // eslint-disable-line max-len
+                return `Warning! ${name} is a select element but no 'valid' params are provided. This field will be ignored.` // eslint-disable-line max-len
             }
         }
 
@@ -103,33 +102,28 @@ export default class JoifulInput extends Component {
     }
 
     render() {
-        const { elementType } = this.props
+        const { elementType, is, ...props } = this.props
         const fieldSchema = this.getFieldSchema()
-        const fieldName = fieldSchema._joinedMetaData.name
+        const name = fieldSchema._joinedMetaData.name
 
-        const fieldValidation = this.validateFieldSchema(fieldSchema, elementType, fieldName)
+        // 'is' is an alias for elementType
+        const elementIs = is || elementType
+
+        const fieldValidation = this.validateFieldSchema(fieldSchema, elementIs, name)
         if (fieldValidation) {
             return console.error(fieldValidation)
         }
 
-        let options = this.getFieldOptions(fieldSchema, elementType, fieldName)
-        // only pass through input props that aren't already in options
-        const inputProps = _.pick(
-            this.props.inputProps,
-            _.difference(_.keys(this.props.inputProps), _.keys(options))
-        )
-        const optionsOverwrites = _.pick(this.props.inputProps, _.keys(options))
-        // now overwrite options that are passed in as inputProps
-        options = _.assign(options, optionsOverwrites)
-        options.inputProps = inputProps || {}
+        const defaults = this.fieldDefaults(fieldSchema, elementIs)
 
-        return createElement(this.form.inputElementTypes[`${elementType}Element`], {
-            ...options,
-            error: this.form.getErrors(fieldName),
+        return createElement(this.form.inputElementTypes[`${elementIs}Element`], {
+            ...defaults,
+            ...props,
+            error: this.form.getErrors(name),
             onBlur: this.form.onBlur,
             onChange: this.onChange,
             onFocus: this.form.onFocus,
-            value: this.form.getValue(fieldName)
+            value: this.form.getValue(name)
         })
     }
 }

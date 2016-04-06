@@ -17,9 +17,9 @@ const MyValidatedForm = () =>
             phone: Joi.string().label('Phone')
         }}
     >
-        <JoifulInput fieldName="name"/>
-        <JoifulInput fieldName="email"/>
-        <JoifulInput fieldName="phone"/>
+        <JoifulInput name="name"/>
+        <JoifulInput name="email"/>
+        <JoifulInput name="phone"/>
     </JoifulForm>
 
 export MyValidatedForm
