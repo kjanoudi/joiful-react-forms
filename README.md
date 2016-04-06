@@ -54,7 +54,10 @@ const FormUsingMyInputs = () =>
             phone: Joi.string().min(10).max(12).label('Phone')
         }}
     >
-        <JoifulInput name="name"/>
+        <JoifulInput
+            is="text"
+            name="name"
+        />
         <JoifulInput name="email"/>
         <JoifulInput name="phone"/>
     </JoifulForm>
