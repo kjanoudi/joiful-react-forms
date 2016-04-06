@@ -1,5 +1,5 @@
 import React from 'react'
-import Container from '.'
+import Container from './Container'
 
 const JoifulDefaultTextarea = (props) =>
     <Container {...props}>

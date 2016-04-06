@@ -13,7 +13,7 @@ export default class JoifulForm extends Component {
 
     static propTypes = {
         children: PropTypes.node,
-        customElements: PropTypes.object,
+        elementTypes: PropTypes.object,
         errors: PropTypes.object,
         onBlur: PropTypes.func,
         onChange: PropTypes.func,
@@ -32,12 +32,12 @@ export default class JoifulForm extends Component {
         errors: {},
         options: {},
         values: {},
-        customElements: {}
+        elementTypes: {}
     };
 
     constructor(props) {
         super(props)
-        this.inputElementTypes = this.getInputElementTypes(this.props.customElements)
+        this.inputElementTypes = this.getInputElementTypes(this.props.elementTypes)
         this.state = this.getStateFromProps(props)
     }
 
@@ -60,18 +60,18 @@ export default class JoifulForm extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.inputElementTypes = this.getInputElementTypes(nextProps.customElements)
+        this.inputElementTypes = this.getInputElementTypes(nextProps.elementTypes)
         this.setState(this.getStateFromProps(nextProps))
     }
 
-    getInputElementTypes(customElements) {
+    getInputElementTypes(elementTypes) {
         const defaultInputElementTypes = {
             text: DefaultTextInput,
             select: () => {},
             textarea: DefaultTextarea,
             checkbox: DefaultCheckbox
         }
-        return _.assign(defaultInputElementTypes, customElements)
+        return _.assign(defaultInputElementTypes, elementTypes)
     }
 
     @autobind
