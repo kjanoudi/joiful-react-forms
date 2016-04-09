@@ -42,7 +42,6 @@ import { JoifulForm, JoifulInput } from 'joiful-react-forms'
 
 const FormWithCustomInputs = () =>
     <JoifulForm
-        elementTypes={}
         onSubmit={handleSubmit}
         schema={{
             name: Joi.string().required(),
