@@ -93,7 +93,7 @@ class default App extends Component {
     }
 
     render() {
-        return <FormUsingMyInputs/>
+        return <FormWithCustomInputs/>
     }
 }
 
