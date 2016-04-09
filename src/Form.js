@@ -244,7 +244,7 @@ export default class JoifulForm extends Component {
                 fieldSchema._tags = _.uniq(_.flatten(_.toArray(fieldSchema._tags).concat(name)))
 
                 fieldSchema._settings = _.defaultsDeep(
-                    fieldSchema._settings,
+                    fieldSchema._settings || {},
                     { language: { label: _.startCase(name) } }
                 )
 
