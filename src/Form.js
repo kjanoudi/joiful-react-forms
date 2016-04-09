@@ -11,6 +11,10 @@ import autobind from 'autobind-decorator'
 
 export default class JoifulForm extends Component {
 
+    static contextTypes = {
+        joifulReactForms: PropTypes.object
+    };
+
     static propTypes = {
         children: PropTypes.node,
         elementTypes: PropTypes.object,
@@ -31,13 +35,14 @@ export default class JoifulForm extends Component {
     static defaultProps = {
         errors: {},
         options: {},
-        values: {},
-        elementTypes: {}
+        values: {}
     };
 
-    constructor(props) {
+    constructor(props, { joifulReactForms: { JoifulInput } }) {
         super(props)
-        this.inputElementTypes = this.getInputElementTypes(this.props.elementTypes)
+        this.inputElementTypes = this.getInputElementTypes(
+            props.elementTypes || (JoifulInput && JoifulInput.types) || {}
+        )
         this.state = this.getStateFromProps(props)
     }
 
@@ -59,9 +64,11 @@ export default class JoifulForm extends Component {
         this.setState(this.getStateFromProps(this.props))
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.inputElementTypes = this.getInputElementTypes(nextProps.elementTypes)
-        this.setState(this.getStateFromProps(nextProps))
+    componentWillReceiveProps({ elementTypes, ...props }, { joifulReactForms: { JoifulInput } }) {
+        this.inputElementTypes = this.getInputElementTypes(
+            elementTypes || (JoifulInput && JoifulInput.types) || {}
+        )
+        this.setState(this.getStateFromProps(props))
     }
 
     getInputElementTypes(elementTypes) {
