@@ -67,11 +67,13 @@ const FormWithCustomInputs = () =>
         />
     </JoifulForm>
 
+
 const MyCustomInput = ({ error, ...props }) =>
     <div>
         <input {...props}/>
         {error}
     </div>
+
 
 class default App extends Component {
 
