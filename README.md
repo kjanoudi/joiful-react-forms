@@ -17,18 +17,9 @@ const MyValidatedForm = () =>
             phone: Joi.string().min(10).max(12)
         }}
     >
-        <JoifulInput
-            name="name"
-            placeholder="Name"
-        />
-        <JoifulInput
-            name="email"
-            placeholder="Email"
-        />
-        <JoifulInput
-            name="phone"
-            placeholder="Phone"
-        />
+        <JoifulInput name="name"/>
+        <JoifulInput name="email"/>
+        <JoifulInput name="phone"/>
     </JoifulForm>
 
 ```
