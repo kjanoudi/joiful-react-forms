@@ -4,7 +4,7 @@
 `npm i joiful-react-forms`
 
 ## Basic Usage
-```
+```javascript
 import Joi from 'joi'
 import { JoifulForm, JoifulInput } from 'joiful-react-forms'
 
@@ -36,7 +36,7 @@ const MyValidatedForm = () =>
 ## Advanced Usage
 
 ### Try it with your own inputs
-```
+```javascript
 import Joi from 'joi'
 import { JoifulForm, JoifulInput } from 'joiful-react-forms'
 
