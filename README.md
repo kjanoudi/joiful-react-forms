@@ -31,42 +31,13 @@ const MyValidatedForm = () =>
 import Joi from 'joi'
 import { JoifulForm, JoifulInput } from 'joiful-react-forms'
 
-const FormWithCustomInputs = () =>
-    <JoifulForm
-        onSubmit={handleSubmit}
-        schema={{
-            name: Joi.string().required(),
-            email: Joi.string().email().required(),
-            phone: Joi.string().min(10).max(12)
-        }}
-    >
-        <JoifulInput
-            is="customInputType" // is defaults to "text"
-            name="name"
-            placeholder="Name"
-        />
-        <JoifulInput
-            is="customInputType"
-            name="email"
-            type="email"
-            placeholder="Email"
-        />
-        <JoifulInput
-            is="customInputType"
-            name="phone"
-            placeholder="Phone"
-        />
-    </JoifulForm>
-
-
-const MyCustomInput = ({ error, ...props }) =>
+const CustomInput = ({ error, ...props }) =>
     <div>
         <input {...props}/>
         {error}
     </div>
 
-
-class default App extends Component {
+class default AppWithCustomJoifulInputs extends Component {
 
     static childContextTypes = {
         joifulReactForms: PropTypes.object
@@ -78,7 +49,7 @@ class default App extends Component {
                 JoifulInput: {
                     types: {
                         // text: MyCustomInput // JoifulInput is="text" is default
-                        customInputName: MyCustomInput
+                        customInput: MyCustomInput
                     }
                 }
             }
@@ -89,5 +60,32 @@ class default App extends Component {
         return <FormWithCustomInputs/>
     }
 }
+
+const Form = () =>
+    <JoifulForm
+        onSubmit={handleSubmit}
+        schema={{
+            name: Joi.string().required(),
+            email: Joi.string().email().required(),
+            phone: Joi.string().min(10).max(12)
+        }}
+    >
+        <JoifulInput
+            is="customInput"
+            name="name"
+            placeholder="Name"
+        />
+        <JoifulInput
+            is="customInput"
+            name="email"
+            type="email"
+            placeholder="Email"
+        />
+        <JoifulInput
+            is={MyCustomInput} // you can define custom inputs inline
+            name="phone"
+            placeholder="Phone"
+        />
+    </JoifulForm>
 
 ```
