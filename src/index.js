@@ -1,2 +1,2 @@
-export JoifulInput from './Input'
-export JoifulForm from './Form'
+export { default as JoifulInput } from './Input'
+export { default as JoifulForm } from './Form'
