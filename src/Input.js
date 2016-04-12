@@ -86,15 +86,17 @@ export default class JoifulInput extends Component {
             return `${name} does not match the expected format as a Joi schmea object. A ValidatedForm must be passed in a valid schema that follows the format specified in the Readme.` // eslint-disable-line max-len
         }
 
-        if (!this.form.inputElementTypes[elementType]) {
-            return `[JoifulReactForms Error] The requested input type of ${elementType} does not have a defined element type` // eslint-disable-line max-len
-        }
+        if (typeof elementType === 'string') {
+            if (!this.form.inputElementTypes[elementType]) {
+                return `[JoifulReactForms Error] The requested input type of ${elementType} does not have a defined element type` // eslint-disable-line max-len
+            }
 
-        if (elementType === 'select') {
-            if (!fieldSchema._valids
-                || !fieldSchema._valids._set
-                || !fieldSchema._valids._set.length === 0) {
-                return `Warning! ${name} is a select element but no 'valid' params are provided. This field will be ignored.` // eslint-disable-line max-len
+            if (elementType === 'select') {
+                if (!fieldSchema._valids
+                    || !fieldSchema._valids._set
+                    || !fieldSchema._valids._set.length === 0) {
+                    return `Warning! ${name} is a select element but no 'valid' params are provided. This field will be ignored.` // eslint-disable-line max-len
+                }
             }
         }
 
@@ -115,8 +117,13 @@ export default class JoifulInput extends Component {
         }
 
         const defaults = this.fieldDefaults(fieldSchema, elementIs)
+        const element = (
+            typeof elementIs === 'string'
+                ? this.form.inputElementTypes[elementIs]
+                : elementIs
+        )
 
-        return createElement(this.form.inputElementTypes[elementIs], {
+        return createElement(element, {
             ...defaults,
             ...props,
             error: this.form.getErrors(name),
