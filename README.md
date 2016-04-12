@@ -37,7 +37,7 @@ const CustomInput = ({ error, ...props }) =>
         {error}
     </div>
 
-class default AppWithCustomJoifulInputs extends Component {
+class AppWithCustomJoifulInputs extends Component {
 
     static childContextTypes = {
         joifulReactForms: PropTypes.object
