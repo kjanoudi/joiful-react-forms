@@ -1,6 +1,6 @@
 {
   "name": "joiful-react-forms",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Automatically generate validated React forms using Joi",
   "main": "lib/index.js",
   "peerDependencies": {
@@ -27,7 +27,8 @@
     "lint": "eslint src/**",
     "prebuild": "rm -rf lib && rm -rf build",
     "build": "babel -d lib/ src/",
-    "prepublish": "npm run lint && npm run build"
+    "prepublish": "npm run lint && npm test && npm run build",
+    "test": "npm run lint && mocha spec --compilers js:babel-register"
   },
   "devDependencies": {
     "autobind-decorator": "^1.3.3",
@@ -43,8 +44,11 @@
     "eslint-plugin-import": "^1.4.0",
     "eslint-plugin-jsx-control-statements": "^1.1.0",
     "eslint-plugin-react": "^4.2.3",
+    "expect": "^1.20.1",
     "lodash": "^4.0.0",
+    "mocha": "^2.5.3",
     "react": "^0.14.6",
+    "react-addons-test-utils": "^15.1.0",
     "react-dom": "^0.14.6"
   },
   "repository": {
