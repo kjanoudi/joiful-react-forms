@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/joiful-react-forms.svg)](https://badge.fury.io/js/joiful-react-forms)
+
 # Joiful React Forms
 
 ## Installation
