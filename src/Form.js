@@ -38,8 +38,9 @@ export default class JoifulForm extends Component {
         values: {}
     };
 
-    constructor(props, { joifulReactForms: { JoifulInput } }) {
+    constructor(props, { joifulReactForms }) {
         super(props)
+        const { JoifulInput } = joifulReactForms || {}
         this.inputElementTypes = this.getInputElementTypes(
             props.elementTypes || (JoifulInput && JoifulInput.types) || {}
         )
@@ -64,7 +65,8 @@ export default class JoifulForm extends Component {
         this.setState(this.getStateFromProps(this.props))
     }
 
-    componentWillReceiveProps({ elementTypes, ...props }, { joifulReactForms: { JoifulInput } }) {
+    componentWillReceiveProps({ elementTypes, ...props }, { joifulReactForms }) {
+        const { JoifulInput } = joifulReactForms || {}
         this.inputElementTypes = this.getInputElementTypes(
             elementTypes || (JoifulInput && JoifulInput.types) || {}
         )

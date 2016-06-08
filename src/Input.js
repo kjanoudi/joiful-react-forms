@@ -45,7 +45,7 @@ export default class JoifulInput extends Component {
     @autobind
     getFieldSchema() {
         this.form = this.form || this.context.form
-        if (this.form.schema === null) {
+        if (!this.form || this.form.schema === null) {
             return null
         }
         return this.form.schema[this.props.name]
@@ -53,11 +53,14 @@ export default class JoifulInput extends Component {
 
     @autobind
     fieldDefaults(fieldSchema, elementType) {
+        if (!fieldSchema) {
+            return {}
+        }
+
         const defaults = {
             ...fieldSchema._joinedMetaData,
             required: fieldSchema._flags.presence === 'required',
             label: fieldSchema._settings.language.label
-            // default: fieldSchema._flags ? fieldSchema._flags.default : undefined
         }
 
         if (fieldSchema._valids
@@ -82,6 +85,10 @@ export default class JoifulInput extends Component {
 
     @autobind
     validateFieldSchema(fieldSchema, elementType, name) {
+        if (!fieldSchema) {
+            return 'Schema is required'
+        }
+
         if (!fieldSchema.isJoi) {
             return `${name} does not match the expected format as a Joi schmea object. A ValidatedForm must be passed in a valid schema that follows the format specified in the Readme.` // eslint-disable-line max-len
         }
@@ -106,31 +113,32 @@ export default class JoifulInput extends Component {
     render() {
         const { elementType, is, ...props } = this.props
         const fieldSchema = this.getFieldSchema()
-        const name = fieldSchema._joinedMetaData.name
+        const name = fieldSchema && fieldSchema._joinedMetaData.name
 
         // 'is' is an alias for elementType
         const elementIs = is || elementType
 
-        const fieldValidation = this.validateFieldSchema(fieldSchema, elementIs, name)
-        if (fieldValidation) {
-            return console.error(fieldValidation)
+        const invalidation = this.validateFieldSchema(fieldSchema, elementIs, name)
+        if (invalidation) {
+            console.error(invalidation)
         }
 
         const defaults = this.fieldDefaults(fieldSchema, elementIs)
+
         const element = (
             typeof elementIs === 'string'
-                ? this.form.inputElementTypes[elementIs]
+                ? this.form && this.form.inputElementTypes[elementIs]
                 : elementIs
         )
 
-        return createElement(element, {
+        return createElement(element || 'input', {
             ...defaults,
             ...props,
-            error: this.form.getErrors(name),
-            onBlur: this.form.onBlur,
+            error: this.form && this.form.getErrors(name),
+            onBlur: this.form && this.form.onBlur,
             onChange: this.onChange,
-            onFocus: this.form.onFocus,
-            value: this.form.getValue(name)
+            onFocus: this.form && this.form.onFocus,
+            value: this.form && this.form.getValue(name)
         })
     }
 }
