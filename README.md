@@ -10,7 +10,7 @@
 import Joi from 'joi'
 import { JoifulForm, JoifulInput } from 'joiful-react-forms'
 
-const MyValidatedForm = () =>
+const Form = () =>
     <JoifulForm
         onSubmit={handleSubmit}
         schema={{
@@ -32,36 +32,6 @@ const MyValidatedForm = () =>
 ```javascript
 import Joi from 'joi'
 import { JoifulForm, JoifulInput } from 'joiful-react-forms'
-
-const CustomInput = ({ error, ...props }) =>
-    <div>
-        <input {...props}/>
-        {error}
-    </div>
-
-class AppWithCustomJoifulInputs extends Component {
-
-    static childContextTypes = {
-        joifulReactForms: PropTypes.object
-    };
-
-    getChildContext() {
-        return {
-            joifulReactForms: {
-                JoifulInput: {
-                    types: {
-                        // text: MyCustomInput // JoifulInput is="text" is default
-                        customInput: MyCustomInput
-                    }
-                }
-            }
-        }
-    }
-
-    render() {
-        return <FormWithCustomInputs/>
-    }
-}
 
 const Form = () =>
     <JoifulForm
@@ -90,4 +60,36 @@ const Form = () =>
         />
     </JoifulForm>
 
+const Input = ({ error, ...props }) =>
+    <div>
+        <input type='text' {...props}/>
+        {error}
+    </div>
+
+const TextArea = ({ error, ...props }) =>
+    <div>
+        <textarea {...props}/>
+        {error}
+    </div>
+
+class App extends Component {
+    static childContextTypes = {
+        joifulReactForms: PropTypes.object
+    };
+    getChildContext() {
+        return {
+            joifulReactForms: {
+                JoifulInput: {
+                    types: {
+                        text: Input,
+                        textarea: TextArea
+                    }
+                }
+            }
+        }
+    }
+    render() {
+        return <Form/>
+    }
+}
 ```
