@@ -7,24 +7,30 @@
 
 ## Basic Usage
 ```javascript
-import Joi from 'joi'
+import { default as React, Component } from 'react'
+import { default as Joi } from 'joi'
 import { JoifulForm, JoifulInput } from 'joiful-react-forms'
 
-const Form = () =>
-    <JoifulForm
-        onChange={(event, formValues) => this.setState({ formValues }) }
-        onSubmit={(error) => ... } 
-        schema={{
-            name: Joi.string().required(),
-            email: Joi.string().email().required(),
-            phone: Joi.string().min(10).max(12)
-        }}
-        values={this.state.formValues}
-    >
-        <JoifulInput name="name"/>
-        <JoifulInput name="email"/>
-        <JoifulInput name="phone"/>
-    </JoifulForm>
+class Form extends Component {
+    render() {
+        return (
+            <JoifulForm
+                onChange={(event, formValues) => this.setState({ formValues }) }
+                onSubmit={(error) => ... } 
+                schema={{
+                    name: Joi.string().required(),
+                    email: Joi.string().email().required(),
+                    phone: Joi.string().min(10).max(12)
+                }}
+                values={this.state.formValues}
+            >
+                <JoifulInput name="name"/>
+                <JoifulInput name="email"/>
+                <JoifulInput name="phone"/>
+            </JoifulForm>
+        )
+    }
+}
 ```
 
 ## Props
