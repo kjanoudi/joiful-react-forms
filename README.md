@@ -42,51 +42,44 @@ const Form = () =>
 | name          | string                    | The name of the input. (Must correspond to the schema prop on `<JoifulForm />`)|
 
 ## Using custom inputs
-joiful-react-forms gives you default html inputs, to override them with your own input components you can supply your application context a `joifulReactForms` object. More on that in the example below.
+`joiful-react-forms gives` you default html inputs. You can define a custom input inline. See example below:
 
 ```javascript
-import Joi from 'joi'
-import { JoifulForm, JoifulInput } from 'joiful-react-forms'
-
-const Form = () =>
-    <JoifulForm
-        onSubmit={handleSubmit}
-        schema={{
-            name: Joi.string().required(),
-            email: Joi.string().email().required(),
-            phone: Joi.string().min(10).max(12)
-        }}
-    >
-        <JoifulInput
-            is="customInput"
-            name="name"
-            placeholder="Name"
-        />
-        <JoifulInput
-            is="customInput"
-            name="email"
-            type="email"
-            placeholder="Email"
-        />
-        <JoifulInput
-            is={MyCustomInput} // you can define custom inputs inline
-            name="phone"
-            placeholder="Phone"
-        />
-    </JoifulForm>
-
 const Input = ({ error, ...props }) =>
     <div>
         <input type='text' {...props}/>
         {error}
     </div>
 
-const TextArea = ({ error, ...props }) =>
+const Textarea = ({ error, ...props }) =>
     <div>
         <textarea {...props}/>
         {error}
     </div>
 
+const Form = () =>
+    <JoifulForm
+        onSubmit={handleSubmit}
+        schema={{
+            name: Joi.string().required(),
+            message: Joi.string().required()
+        }}
+    >
+        <JoifulInput
+            is={Input}
+            name="name"
+        />
+        <JoifulInput
+            is={Textarea}
+            name="message"
+        />
+    </JoifulForm>
+
+```
+
+Or if you prefer, you can supply your application context a `joifulReactForms` object. See example:
+
+```javascript
 class App extends Component {
     static childContextTypes = {
         joifulReactForms: PropTypes.object
@@ -97,14 +90,14 @@ class App extends Component {
                 JoifulInput: {
                     types: {
                         text: Input,
-                        textarea: TextArea
+                        textarea: Textarea
                     }
                 }
             }
         }
     }
     render() {
-        return <Form/>
+        ...
     }
 }
 ```
