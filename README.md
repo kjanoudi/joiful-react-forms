@@ -44,11 +44,11 @@ class Form extends Component {
 ### `<JoifulInput />`
 | Prop          | Type                      | Description                                                             |
 | :------------ | :------------------------ | :---------------------------------------------------------------------- |
-| is            | func                      | A React component, typically used to override at the instance level. See 'Using custom inputs' for global custom inputs.|
+| is ('text')   | func or string            | Either a key from the `joifulReactForms.JoifulInput.types` object stored in context (see below), or a React component instance. |
 | name          | string                    | The name of the input. (Must correspond to the schema prop on `<JoifulForm />`)|
 
 ## Using custom inputs
-`joiful-react-forms gives` you default html inputs. You can define a custom input inline. See example below:
+`joiful-react-forms gives` you default html inputs. You can define a custom input inline using the `is` prop. See example below:
 
 ```javascript
 const Input = ({ error, ...props }) =>
@@ -107,3 +107,5 @@ class App extends Component {
     }
 }
 ```
+
+The `is` property also serves as a reference the types of inputs you have in your context. We have defaults for keys like text, textarea and checkbox. Default keys can be overridden. You may name your keys anything you like
