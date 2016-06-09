@@ -26,9 +26,16 @@ const Form = () =>
 
 ```
 
-## Advanced Usage
+## Props
+### `<JoifulInput />`
+| Prop          | Type                      | Description                                                             |
+| :------------ | :------------------------ | :---------------------------------------------------------------------- |
+| is            | func                      | A React component, typically used to override at the instance level. See 'Using custom inputs' for global custom inputs.|
+| name          | string                    | The name of the input. (Must correspond to the schema prop on `<JoifulForm />`)                                           |
 
-### Try it with your own inputs
+## Using custom inputs
+joiful-react-forms gives you default html inputs, to override them with your own input components you can supply your application context a `joifulReactForms` object. More on that in the example below.
+
 ```javascript
 import Joi from 'joi'
 import { JoifulForm, JoifulInput } from 'joiful-react-forms'
