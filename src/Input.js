@@ -10,7 +10,7 @@ export default class JoifulInput extends Component {
 
     static propTypes = {
         elementType: PropTypes.string,
-        is: PropTypes.string,
+        is: PropTypes.oneOf([PropTypes.func, PropTypes.string]),
         name: PropTypes.string.isRequired,
         onChange: PropTypes.func
     };
