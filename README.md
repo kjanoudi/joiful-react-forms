@@ -12,26 +12,34 @@ import { JoifulForm, JoifulInput } from 'joiful-react-forms'
 
 const Form = () =>
     <JoifulForm
-        onSubmit={handleSubmit}
+        onChange={(event, formValues) => this.setState({ formValues }) }
+        onSubmit={(error) => ... } 
         schema={{
             name: Joi.string().required(),
             email: Joi.string().email().required(),
             phone: Joi.string().min(10).max(12)
         }}
+        values={this.state.formValues}
     >
         <JoifulInput name="name"/>
         <JoifulInput name="email"/>
         <JoifulInput name="phone"/>
     </JoifulForm>
-
 ```
 
 ## Props
+### `<JoifulForm />`
+| Prop         | Type   | Description                              |
+| :----------- | :----- | :--------------------------------------- |
+| onChange     | func   | Passes (event, formValues) as arguments. |
+| onSubmit     | func   | Passes (error) as an argument.           |
+| schema       | object | A Joi validation schema.                 |
+
 ### `<JoifulInput />`
 | Prop          | Type                      | Description                                                             |
 | :------------ | :------------------------ | :---------------------------------------------------------------------- |
 | is            | func                      | A React component, typically used to override at the instance level. See 'Using custom inputs' for global custom inputs.|
-| name          | string                    | The name of the input. (Must correspond to the schema prop on `<JoifulForm />`)                                           |
+| name          | string                    | The name of the input. (Must correspond to the schema prop on `<JoifulForm />`)|
 
 ## Using custom inputs
 joiful-react-forms gives you default html inputs, to override them with your own input components you can supply your application context a `joifulReactForms` object. More on that in the example below.
