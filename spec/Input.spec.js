@@ -9,11 +9,15 @@ describe('JoifulInput', () => {
     let tree
 
     beforeEach(() => {
-        renderer.render(<JoifulInput/>)
+        renderer.render(<JoifulInput outsideProp={123} />)
         tree = renderer.getRenderOutput()
     })
 
     it('should render', () => {
         expect(tree.type).toEqual('input')
+    })
+
+    it('respects outside properties', () => {
+        expect(tree.props.outsideProp).toEqual(123)
     })
 })

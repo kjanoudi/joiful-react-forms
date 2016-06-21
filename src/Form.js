@@ -265,19 +265,19 @@ export default class JoifulForm extends Component {
     }
 
     render() {
-        const { props, submit } = this
-        const { children } = props
-
-        if (children) {
+        if (this.props.children) {
             return (
-                <form onSubmit={submit}>
-                    {children}
-                </form>
+                <form
+                    onSubmit={this.submit}
+                    {...this.props}
+                />
             )
         }
-
         return (
-            <form onSubmit={submit}>
+            <form
+                onSubmit={this.submit}
+                {...this.props}
+            >
                 <DefaultInputGroup/>
             </form>
         )
