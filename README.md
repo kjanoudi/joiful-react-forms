@@ -16,7 +16,7 @@ class Form extends Component {
         return (
             <JoifulForm
                 onChange={(event, formValues) => this.setState({ formValues }) }
-                onSubmit={(error) => ... } 
+                onSubmit={(error, formValues, event) => ... } 
                 schema={{
                     name: Joi.string().required(),
                     email: Joi.string().email().required(),
