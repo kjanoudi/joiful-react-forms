@@ -16,7 +16,7 @@ import { default as autobind } from 'autobind-decorator'
 import { default as defaultsDeep } from 'lodash.defaultsdeep'
 import { default as React, Component, PropTypes } from 'react'
 
-export default class JoifulForm extends Component {
+export default class Form extends Component {
 
   static contextTypes = {
     joifulReactForms: PropTypes.object
@@ -58,8 +58,8 @@ export default class JoifulForm extends Component {
       ...this.getStateFromProps(props)
     }
 
-    const { JoifulInput } = { ...config }
-    this.elemTypes = this.getElemTypes(get(JoifulInput, 'types', {}))
+    const { Input } = { ...config }
+    this.elemTypes = this.getElemTypes(get(Input, 'types', {}))
   }
 
   getChildContext () {
@@ -81,8 +81,8 @@ export default class JoifulForm extends Component {
   }
 
   componentWillReceiveProps ({ elementTypes, ...props }, { joifulReactForms: config }) {
-    const { JoifulInput } = { ...config }
-    this.elemTypes = this.getElemTypes(get(JoifulInput, 'types', {}))
+    const { Input } = { ...config }
+    this.elemTypes = this.getElemTypes(get(Input, 'types', {}))
     this.setState(this.getStateFromProps(props))
   }
 

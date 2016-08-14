@@ -3,7 +3,7 @@ import { default as get } from 'lodash.get'
 import { default as autobind } from 'autobind-decorator'
 import { Component, createElement, PropTypes } from 'react'
 
-export default class JoifulInput extends Component {
+export default class Input extends Component {
 
   static contextTypes = {
     form: PropTypes.object.isRequired
