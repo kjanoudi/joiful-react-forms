@@ -90,19 +90,11 @@ export default class Input extends Component {
         the format specified in the Readme.
       `
     }
-    if (typeof is === 'string') {
-      if (!get(this, ['context', 'form', 'elemTypes', is])) {
-        return `
-          [JoifulReactForms Error] The requested input type of
-          ${is} does not have a defined element type
-        `
-      }
-
-      if (is === 'select' && get(schema, '_valids._set', []).length === 0) {
-        return `
-          Warning! ${name} is a select element but no valid params were provided.
-        `
-      }
+    if (typeof is === 'string' && !get(this, ['context', 'form', 'elemTypes', is])) {
+      return `
+        [JoifulReactForms Error] The requested input type of
+        ${is} does not have a defined element type
+      `
     }
     return null
   }
