@@ -100,8 +100,7 @@ export default class Input extends Component {
 
       if (is === 'select' && get(schema, '_valids._set', []).length === 0) {
         return `
-          Warning! ${name} is a select element but no'valid'
-          params are provided. This field will be ignored.
+          Warning! ${name} is a select element but no valid params were provided.
         `
       }
     }
