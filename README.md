@@ -15,18 +15,18 @@ class Form extends Component {
     render() {
         return (
             <Form
-                onChange={(event, formValues) => this.setState({ formValues }) }
-                onSubmit={(error, formValues, event) => ... } 
+                onChange={(event, values) => this.setState({ values }) }
+                onSubmit={(error, values, event) => ... } 
                 schema={{
                     name: Joi.string().required(),
                     email: Joi.string().email().required(),
                     phone: Joi.string().min(10).max(12)
                 }}
-                values={this.state.formValues}
+                values={this.state.values}
             >
-                <Input name="name"/>
-                <Input name="email"/>
-                <Input name="phone"/>
+                <Input name="name" />
+                <Input name="email" />
+                <Input name="phone" />
             </Form>
         )
     }
@@ -52,7 +52,7 @@ class Form extends Component {
 `joiful-react-forms` gives you default html inputs. You can define a custom input inline using the `is` prop. See example below:
 
 ```javascript
-const Input = ({ error, ...props }) =>
+const TextInput = ({ error, ...props }) =>
     <div>
         <input type='text' {...props}/>
         {error}
@@ -72,14 +72,8 @@ const Form = () =>
             message: Joi.string().required()
         }}
     >
-        <Input
-            is={Input}
-            name="name"
-        />
-        <Input
-            is={Textarea}
-            name="message"
-        />
+        <Input is={TextInput} name="name" />
+        <Input is={Textarea} name="message" />
     </Form>
 
 ```
@@ -96,7 +90,7 @@ class App extends Component {
             joifulReactForms: {
                 Input: {
                     types: {
-                        text: Input,
+                        text: TextInput,
                         textarea: Textarea,
                         special: () => <input type='special'/>
                     }
