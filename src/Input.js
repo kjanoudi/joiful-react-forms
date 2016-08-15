@@ -1,143 +1,135 @@
+
+import { default as get } from 'lodash.get'
+import { default as autobind } from 'autobind-decorator'
 import { Component, createElement, PropTypes } from 'react'
-import _ from 'lodash'
-import autobind from 'autobind-decorator'
 
-export default class JoifulInput extends Component {
+export default class Input extends Component {
 
-    static contextTypes = {
-        form: PropTypes.object.isRequired
-    };
+  static contextTypes = {
+    form: PropTypes.object.isRequired
+  };
 
-    static propTypes = {
-        elementType: PropTypes.string,
-        is: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
-        name: PropTypes.string.isRequired,
-        onChange: PropTypes.func
-    };
+  static propTypes = {
+    is: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+    name: PropTypes.string.isRequired,
+    onChange: PropTypes.func
+  };
 
-    static defaultProps = {
-        is: 'text'
-    };
+  static defaultProps = {
+    is: 'text'
+  };
 
-    componentWillReceiveProps(nextProps, { form }) {
-        this.form = form
+  @autobind
+  onChange (event) {
+    if (event.preventDefault) {
+      event.preventDefault()
+    }
+    if (this.props.onChange) {
+      this.props.onChange(event)
+    }
+    if (this.context.form.onChange) {
+      this.context.form.onChange(event, {
+        [event.target.name]: event.target.checked || event.target.value
+      })
+    }
+  }
+
+  @autobind
+  getSchema () {
+    const { form } = this.context
+    if (!form || !form.schema) {
+      return null
+    }
+    const { name } = this.props
+    const schema = form.schema[name]
+    if (!schema) {
+      console.error(`${name} is not a key in your schema.`)
+    }
+    return schema
+  }
+
+  optionsForSelectElem (schema = {}) {
+    if (get(schema, '_valids._set', []).length === 0) {
+      return false
+    }
+    const optionValues = schema._joinedMetaData.names || schema._valids._set
+    const optionNames = schema._valids._set
+    return optionNames.map((children, i) => ({
+      children,
+      value: optionValues[i]
+    }))
+  }
+
+  @autobind
+  defaults (schema, is) {
+    if (!schema) {
+      return {}
+    }
+    const defaults = {
+      ...schema._joinedMetaData,
+      required: schema._flags.presence === 'required',
+      label: schema._settings.language.label,
+      placeholder: is === 'text' && schema._examples[0]
+    }
+    const options = this.optionsForSelectElem(schema)
+    if (options) {
+      defaults.options = options
+    }
+    return defaults
+  }
+
+  @autobind
+  validateSchema (schema, is, name) {
+    if (!schema) {
+      return 'Schema is required'
+    }
+    if (!schema.isJoi) {
+      return `
+        ${name} does not match the expected format as a Joi schmea object.
+        A ValidatedForm must be passed in a valid schema that follows
+        the format specified in the Readme.
+      `
+    }
+    if (typeof is === 'string') {
+      if (!get(this, ['context', 'form', 'elemTypes', is])) {
+        return `
+          [JoifulReactForms Error] The requested input type of
+          ${is} does not have a defined element type
+        `
+      }
+
+      if (is === 'select' && get(schema, '_valids._set', []).length === 0) {
+        return `
+          Warning! ${name} is a select element but no valid params were provided.
+        `
+      }
+    }
+    return null
+  }
+
+  render () {
+    const { is, ...props } = this.props
+    const schema = this.getSchema()
+    const name = get(schema, '_joinedMetaData.name')
+
+    const invalidation = this.validateSchema(schema, is, name)
+    if (invalidation) {
+      console.error(invalidation)
     }
 
-    @autobind
-    onChange(event) {
-        if (event.preventDefault) {
-            event.preventDefault()
-        }
+    const form = get(this, 'context.form', {})
+    const el = typeof is === 'string' ? get(form, ['elemTypes', is], 'input') : is
+    const value = form.getValue && form.getValue(name)
+    const error = form.getErrors && form.getErrors(name)
 
-        if (this.props.onChange) {
-            this.props.onChange(event)
-        }
-
-        if (this.form.onChange) {
-            this.form.onChange(
-                event,
-                { [event.target.name]: event.target.checked || event.target.value }
-            )
-        }
-    }
-
-    @autobind
-    getFieldSchema() {
-        this.form = this.form || this.context.form
-        if (!this.form || this.form.schema === null) {
-            return null
-        }
-        return this.form.schema[this.props.name]
-    }
-
-    @autobind
-    fieldDefaults(fieldSchema, elementType) {
-        if (!fieldSchema) {
-            return {}
-        }
-
-        const defaults = {
-            ...fieldSchema._joinedMetaData,
-            required: fieldSchema._flags.presence === 'required',
-            label: fieldSchema._settings.language.label
-        }
-
-        if (fieldSchema._valids
-            && fieldSchema._valids._set
-            && fieldSchema._valids._set.length > 0) {
-            const optionValues = fieldSchema._joinedMetaData.names || fieldSchema._valids._set
-            const optionNames = fieldSchema._valids._set
-            defaults.enums = _.zipObject(optionNames, optionValues)
-            defaults.allowed = optionValues
-        }
-
-        switch (elementType) {
-        case 'text':
-            defaults.placeholder = fieldSchema._examples[0] || undefined
-            break
-        default:
-            break
-        }
-
-        return defaults
-    }
-
-    @autobind
-    validateFieldSchema(fieldSchema, elementType, name) {
-        if (!fieldSchema) {
-            return 'Schema is required'
-        }
-
-        if (!fieldSchema.isJoi) {
-            return `${name} does not match the expected format as a Joi schmea object. A ValidatedForm must be passed in a valid schema that follows the format specified in the Readme.` // eslint-disable-line max-len
-        }
-
-        if (typeof elementType === 'string') {
-            if (!this.form.inputElementTypes[elementType]) {
-                return `[JoifulReactForms Error] The requested input type of ${elementType} does not have a defined element type` // eslint-disable-line max-len
-            }
-
-            if (elementType === 'select') {
-                if (!fieldSchema._valids
-                    || !fieldSchema._valids._set
-                    || !fieldSchema._valids._set.length === 0) {
-                    return `Warning! ${name} is a select element but no 'valid' params are provided. This field will be ignored.` // eslint-disable-line max-len
-                }
-            }
-        }
-
-        return null
-    }
-
-    render() {
-        const { elementType, is, ...props } = this.props
-        const fieldSchema = this.getFieldSchema()
-        const name = fieldSchema && fieldSchema._joinedMetaData.name
-
-        // 'is' is an alias for elementType
-        const elementIs = is || elementType
-
-        const invalidation = this.validateFieldSchema(fieldSchema, elementIs, name)
-        if (invalidation) {
-            console.error(invalidation)
-        }
-
-        const defaults = this.fieldDefaults(fieldSchema, elementIs)
-
-        const element = (
-            typeof elementIs === 'string'
-                ? this.form && this.form.inputElementTypes[elementIs]
-                : elementIs
-        )
-
-        return createElement(element || 'input', {
-            ...defaults,
-            ...props,
-            error: this.form && this.form.getErrors(name),
-            onBlur: this.form && this.form.onBlur,
-            onChange: this.onChange,
-            onFocus: this.form && this.form.onFocus,
-            value: this.form && this.form.getValue(name)
-        })
-    }
+    return createElement(el, {
+      ...this.defaults(schema, is),
+      ...props,
+      error,
+      onBlur: form.onBlur,
+      onChange: this.onChange,
+      onFocus: form.onFocus,
+      value
+    })
+  }
 }

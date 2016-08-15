@@ -9,12 +9,12 @@
 ```javascript
 import { default as React, Component } from 'react'
 import { default as Joi } from 'joi'
-import { JoifulForm, JoifulInput } from 'joiful-react-forms'
+import { Form, Input } from 'joiful-react-forms'
 
 class Form extends Component {
     render() {
         return (
-            <JoifulForm
+            <Form
                 onChange={(event, formValues) => this.setState({ formValues }) }
                 onSubmit={(error, formValues, event) => ... } 
                 schema={{
@@ -24,28 +24,29 @@ class Form extends Component {
                 }}
                 values={this.state.formValues}
             >
-                <JoifulInput name="name"/>
-                <JoifulInput name="email"/>
-                <JoifulInput name="phone"/>
-            </JoifulForm>
+                <Input name="name"/>
+                <Input name="email"/>
+                <Input name="phone"/>
+            </Form>
         )
     }
 }
 ```
 
 ## Props
-### `<JoifulForm />`
-| Prop         | Type   | Description                              |
-| :----------- | :----- | :--------------------------------------- |
-| onChange     | func   | Passes (event, formValues) as arguments. |
-| onSubmit     | func   | Passes (error) as an argument.           |
-| schema       | object | A Joi validation schema.                 |
+### `<Form />`
+| Prop         | Type   | Description                                              |
+| :----------- | :----- | :------------------------------------------------------- |
+| schema       | object | Joi validation schema.                                   |
+| values       | object | Object with keys corresponding to the schema             |
+| onChange     | func   | (event, values) Fires when any value in the form changes |
+| onSubmit     | func   | (error, values)                                          |
 
-### `<JoifulInput />`
+### `<Input />`
 | Prop          | Type                      | Description                                                             |
 | :------------ | :------------------------ | :---------------------------------------------------------------------- |
-| is ('text')   | func or string            | Either a key from the `joifulReactForms.JoifulInput.types` object stored in context (see below), or a React component instance. |
-| name          | string                    | The name of the input. (Must correspond to the schema prop on `<JoifulForm />`)|
+| is ('text')   | func or string            | Either a key from the `joifulReactForms.Input.types` object stored in context (see below), or a React component instance. |
+| name          | string                    | The name of the input. (Must correspond to the schema prop on `<Form />`)|
 
 ## Using custom inputs
 `joiful-react-forms` gives you default html inputs. You can define a custom input inline using the `is` prop. See example below:
@@ -64,22 +65,22 @@ const Textarea = ({ error, ...props }) =>
     </div>
 
 const Form = () =>
-    <JoifulForm
+    <Form
         onSubmit={handleSubmit}
         schema={{
             name: Joi.string().required(),
             message: Joi.string().required()
         }}
     >
-        <JoifulInput
+        <Input
             is={Input}
             name="name"
         />
-        <JoifulInput
+        <Input
             is={Textarea}
             name="message"
         />
-    </JoifulForm>
+    </Form>
 
 ```
 
@@ -93,7 +94,7 @@ class App extends Component {
     getChildContext() {
         return {
             joifulReactForms: {
-                JoifulInput: {
+                Input: {
                     types: {
                         text: Input,
                         textarea: Textarea,
@@ -112,6 +113,6 @@ class App extends Component {
 The `is` property also serves as a reference the types of inputs you have in your context. We have defaults for keys like text, textarea and checkbox. As demonstrated above, you can override these with your own and may supply custom inputs which can be named anything you like and referenced as a string in the `is` prop. Take a look:
 
 ```javascript
-<JoifulInput is='textarea' />
-<JoifulInput is='special' />
+<Input is='textarea' />
+<Input is='special' />
 ```

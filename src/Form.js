@@ -1,285 +1,297 @@
-import React, { Component, PropTypes } from 'react'
-import Joi from 'joi'
-import _ from 'lodash'
-import {
-    Checkbox as DefaultCheckbox,
-    DefaultInputGroup,
-    Textarea as DefaultTextarea,
-    TextInput as DefaultTextInput
-  } from './DefaultElements'
-import autobind from 'autobind-decorator'
 
-export default class JoifulForm extends Component {
+import { default as Joi } from 'joi'
+import { default as get } from 'lodash.get'
+import { default as uniq } from 'lodash.uniq'
+import { default as omit } from 'lodash.omit'
+import { default as pick } from 'lodash.pick'
+import { default as keys } from 'lodash.keys'
+import { default as assign } from 'lodash.assign'
+import { default as forOwn } from 'lodash.forown'
+import { default as toArray } from 'lodash.toarray'
+import { default as isEmpty } from 'lodash.isempty'
+import { default as flatten } from 'lodash.flatten'
+import * as DefaultElements from './DefaultElements'
+import { default as startCase } from 'lodash.startcase'
+import { default as autobind } from 'autobind-decorator'
+import { default as defaultsDeep } from 'lodash.defaultsdeep'
+import { default as React, Component, PropTypes } from 'react'
 
-    static contextTypes = {
-        joifulReactForms: PropTypes.object
-    };
+export default class Form extends Component {
 
-    static propTypes = {
-        children: PropTypes.node,
-        elementTypes: PropTypes.object,
-        errors: PropTypes.object,
-        onBlur: PropTypes.func,
-        onChange: PropTypes.func,
-        onFocus: PropTypes.func,
-        onSubmit: PropTypes.func,
-        options: PropTypes.object,
-        schema: PropTypes.object.isRequired,
-        values: PropTypes.object
-    };
+  static contextTypes = {
+    joifulReactForms: PropTypes.object
+  };
 
-    static childContextTypes = {
-        form: PropTypes.object
-    };
+  static propTypes = {
+    children: PropTypes.node,
+    elementTypes: PropTypes.object,
+    errors: PropTypes.object,
+    onBlur: PropTypes.func,
+    onChange: PropTypes.func,
+    onFocus: PropTypes.func,
+    onSubmit: PropTypes.func,
+    options: PropTypes.object,
+    schema: PropTypes.object.isRequired,
+    values: PropTypes.object
+  };
 
-    static defaultProps = {
-        errors: {},
-        options: {},
-        values: {}
-    };
+  static childContextTypes = {
+    form: PropTypes.object
+  };
 
-    constructor(props, { joifulReactForms }) {
-        super(props)
-        const { JoifulInput } = joifulReactForms || {}
-        this.inputElementTypes = this.getInputElementTypes(
-            props.elementTypes || (JoifulInput && JoifulInput.types) || {}
-        )
-        this.state = this.getStateFromProps(props)
+  static defaultProps = {
+    errors: {},
+    options: {},
+    values: {}
+  };
+
+  constructor (props, { joifulReactForms: config }) {
+    super(props)
+
+    this.state = {
+      keyMap: {},
+      schema: {}
     }
 
-    getChildContext() {
-        return {
-            form: {
-                schema: this.props.schema,
-                getValue: this.getValue,
-                getErrors: this.getErrors,
-                onChange: this.onChange,
-                onFocus: this.onFocus,
-                onBlur: this.onBlur,
-                inputElementTypes: this.inputElementTypes
-            }
+    this.state = {
+      ...this.state,
+      ...this.getStateFromProps(props)
+    }
+
+    const { Input } = { ...config }
+    this.elemTypes = this.getElemTypes(get(Input, 'types', {}))
+  }
+
+  getChildContext () {
+    return {
+      form: {
+        schema: this.props.schema,
+        getValue: this.getValue,
+        getErrors: this.getErrors,
+        onChange: this.onChange,
+        onFocus: this.onFocus,
+        onBlur: this.onBlur,
+        elemTypes: this.elemTypes
+      }
+    }
+  }
+
+  componentDidMount () {
+    this.setState(this.getStateFromProps(this.props))
+  }
+
+  componentWillReceiveProps ({ elementTypes, ...props }, { joifulReactForms: config }) {
+    const { Input } = { ...config }
+    this.elemTypes = this.getElemTypes(get(Input, 'types', {}))
+    this.setState(this.getStateFromProps(props))
+  }
+
+  getElemTypes (elementTypes = {}) {
+    return {
+      text: DefaultElements.TextInput,
+      select: () => {},
+      textarea: DefaultElements.Textarea,
+      checkbox: DefaultElements.Checkbox,
+      ...elementTypes
+    }
+  }
+
+  setLabel (schema = {}, name = '') {
+    schema._settings = defaultsDeep(
+      get(schema, '_settings', {}),
+      {
+        language: {
+          label: startCase(name)
         }
-    }
+      }
+    )
+    return schema
+  }
 
-    componentDidMount() {
-        this.setState(this.getStateFromProps(this.props))
+  @autobind
+  getStateFromProps (props) {
+    const state = {
+      ...this.state,
+      propErrors: props.errors,
+      values: props.values
     }
-
-    componentWillReceiveProps({ elementTypes, ...props }, { joifulReactForms }) {
-        const { JoifulInput } = joifulReactForms || {}
-        this.inputElementTypes = this.getInputElementTypes(
-            elementTypes || (JoifulInput && JoifulInput.types) || {}
-        )
-        this.setState(this.getStateFromProps(props))
-    }
-
-    getInputElementTypes(elementTypes) {
-        const defaultInputElementTypes = {
-            text: DefaultTextInput,
-            select: () => {},
-            textarea: DefaultTextarea,
-            checkbox: DefaultCheckbox
+    if (props.schema) {
+      forOwn(props.schema, (schema, name) => {
+        state.schema[name] = schema
+        schema._joinedMetaData = assign.apply(this, schema._meta) || {}
+        schema._joinedMetaData.name = name
+        schema._tags = uniq(flatten(toArray(schema._tags).concat(name)))
+        schema = this.setLabel(schema, name)
+        state.keyMap[schema._settings.language.label] = name
+        state.values[name] = get(props, ['values', name]) || schema._flags.default
+        if (state.values[name] === undefined && schema._type === 'boolean') {
+          state.values[name] = false
         }
-        return _.assign(defaultInputElementTypes, elementTypes)
+      })
+    }
+    return state
+  }
+
+  @autobind
+  getErrors (fieldName) {
+    const errors = {
+      ...this.state.errors,
+      ...this.state.propErrors
+    }
+    if (fieldName && !isEmpty(errors)) {
+      return errors[fieldName]
+    }
+    return null
+  }
+
+  parseJoiErrors ({ details }) {
+    const errors = {}
+    details.forEach(({ path, message }) => {
+      errors[path] = message
+    })
+    return errors
+  }
+
+  @autobind
+  submit (event) {
+    if (!this.props.onSubmit) {
+      return
     }
 
-    @autobind
-    getErrors(fieldName) {
-        const errors = _.assign(this.state.errors || {}, this.state.propErrors)
-        if (fieldName && !_.isEmpty(errors)) {
-            return errors[fieldName]
-        }
-        return null
+    event.preventDefault()
+
+    const { onSubmit } = this.props
+    const { schema } = this.state
+    const values = this.getFormData(this.state.values)
+    const options = {
+      ...this.props.options,
+      abortEarly: false,
+      context: values
+    }
+    let errors = null
+
+    Joi.validate(values, schema, options, (err) => {
+      if (err) {
+        errors = this.parseJoiErrors(err)
+      }
+    })
+
+    this.setState({ errors })
+    onSubmit(errors, values, event)
+  }
+
+  @autobind
+  getFormData (values = {}) {
+    return pick(values, keys(this.state.schema))
+  }
+
+  @autobind
+  getValue (fieldName) {
+    const { values } = this.state
+    if (fieldName && values) {
+      return typeof values[fieldName] !== 'undefined' ? values[fieldName] : ''
+    }
+    return ''
+  }
+
+  @autobind
+  getAllErrors () {
+    const errors = {
+      ...this.state.errors,
+      ...this.state.propErrors
+    }
+    return isEmpty(errors) ? null : errors
+  }
+
+  @autobind
+  onChange (event, values) {
+    const { checked, name, value } = event.target
+
+    const nextState = {
+      values: {
+        ...this.state.values,
+        ...values
+      }
     }
 
-    @autobind
-    submit(event) {
-        if (!this.props.onSubmit) {
-            return
-        }
+    if (this.state.errors && this.state.errors[name]) {
+      const options = {
+        ...this.props.options,
+        context: nextState.values
+      }
 
-        event.preventDefault()
+      const { schema } = this.state
 
-        const options = _.assign(this.props.options, {
-            abortEarly: false,
-            context: this.state.values
-        })
-
-        Joi.validate(this.state.values, this.state.schema, options, (err) => {
-            if (err) {
-                const formErrors = {}
-                err.details.forEach((inputError) => {
-                    formErrors[inputError.path] = inputError.message
-                })
-                this.setState({
-                    errors: formErrors
-                }, () => {
-                    this.props.onSubmit(formErrors, this.state.values, null)
-                })
-                return
-            }
-            this.props.onSubmit(null, this.state.values, event)
-        })
-    }
-
-    @autobind
-    getValue(fieldName) {
-        const { values } = this.state
-        if (fieldName && values) {
-            return values[fieldName]
-        }
-        return null
-    }
-
-    @autobind
-    getAllErrors() {
-        const errors = _.assign(this.state.errors || {}, this.state.propErrors)
-        return _.isEmpty(errors) ? null : errors
-    }
-
-    @autobind
-    onChange(event, values) {
-        const { checked, name, value } = event.target
-
-        const newState = {
-            values: {
-                ...this.state.values,
-                ...values
-            }
-        }
-
-        if (this.state.errors && this.state.errors[name]) {
-            const options = _.assign(this.props.options, { context: newState.values })
-            Joi.validate(checked || value, this.state.schema[name], options, (err) => {
-                if (err) {
-                    const formErrors = {}
-                    err.details.forEach((inputError) => {
-                        formErrors[this.state.keyMap[inputError.path]] = inputError.message
-                    })
-
-                    newState.errors = { ...this.state.errors, ...formErrors }
-
-                    this.setState(newState, () => {
-                        if (this.props.onChange) {
-                            this.props.onChange(event, newState.values)
-                        }
-                    })
-                } else {
-                    newState.errors = { ...this.state.errors }
-                    delete newState.errors[name]
-
-                    this.setState(newState, () => {
-                        if (this.props.onChange) {
-                            this.props.onChange(event, newState.values)
-                        }
-                    })
-                }
-            })
+      Joi.validate(checked || value, schema[name], options, (err) => {
+        if (err) {
+          nextState.errors = {
+            ...this.state.errors,
+            ...this.parseJoiErrors(err)
+          }
         } else {
-            this.setState(newState, () => {
-                if (this.props.onChange) {
-                    this.props.onChange(event, newState.values)
-                }
-            })
+          delete nextState.errors[name]
         }
+      })
     }
 
-    @autobind
-    onFocus(event) {
-        const { onFocus } = this.props
-        if (onFocus) {
-            onFocus(event)
-        }
+    const { onChange } = this.props
+    if (onChange) {
+      onChange(event, nextState.values)
     }
 
-    @autobind
-    onBlur(event) {
-        const { name, value } = event.target
+    this.setState(nextState)
+  }
 
-        // Dont validate if the field is empty and not required
-        if (typeof value === 'string' && value.length === 0
-            && this.state.schema[name]._flags.presence !== 'required') {
-            if (this.props.onBlur) {
-                this.props.onBlur(event)
-            }
-            return
-        }
+  @autobind
+  onFocus (event) {
+    const { onFocus } = this.props
+    if (onFocus) {
+      onFocus(event)
+    }
+  }
 
-        const options = _.assign(this.props.options, { context: this.state.values })
+  @autobind
+  onBlur (event) {
+    const { name, value } = event
 
-        Joi.validate(value, this.state.schema[name], options, (err) => {
-            if (err) {
-                const formErrors = {}
-                err.details.forEach((inputError) => {
-                    formErrors[this.state.keyMap[inputError.path]] = inputError.message
-                })
+    const schema = get(this.state, [schema, name], {})
 
-                this.setState({
-                    errors: { ...this.state.errors, ...formErrors }
-                }, () => {
-                    if (this.props.onBlur) {
-                        this.props.onBlur(event)
-                    }
-                })
-            } else {
-                if (this.props.onBlur) {
-                    this.props.onBlur(event)
-                }
-            }
+    if (typeof value === 'string' &&
+      value.length === 0 &&
+      schema._flags.presence !== 'required' &&
+      this.props.onBlur) {
+      this.props.onBlur(event)
+    }
+
+    const options = {
+      ...this.props.options,
+      context: this.state.values
+    }
+
+    Joi.validate(value, schema, options, (err) => {
+      if (err) {
+        this.setState({
+          errors: {
+            ...this.state.errors,
+            ...this.parseJoiErrors(err)
+          }
         })
+      }
+    })
+
+    if (this.props.onBlur) {
+      this.props.onBlur(event)
     }
+  }
 
-    @autobind
-    getStateFromProps(props) {
-        const state = {
-            schema: {},
-            propErrors: props.errors,
-            keyMap: {},
-            values: props.values
-        }
-
-        if (props.schema) {
-            _.forOwn(props.schema, (fieldSchema, name) => {
-                state.schema[name] = fieldSchema
-                fieldSchema._joinedMetaData = _.assign.apply(this, fieldSchema._meta) || {}
-                fieldSchema._joinedMetaData.name = name
-                fieldSchema._tags = _.uniq(_.flatten(_.toArray(fieldSchema._tags).concat(name)))
-
-                fieldSchema._settings = _.defaultsDeep(
-                    fieldSchema._settings || {},
-                    { language: { label: _.startCase(name) } }
-                )
-
-                state.keyMap[fieldSchema._settings.language.label] = name
-
-                state.values[name] = (props.values && props.values[name])
-                    ? props.values[name]
-                    : fieldSchema._flags.default
-
-                if (state.values[name] === undefined && fieldSchema._type === 'boolean') {
-                    state.values[name] = false
-                }
-            })
-        }
-        return state
-    }
-
-    render() {
-        if (this.props.children) {
-            return (
-                <form
-                    {...this.props}
-                    onSubmit={this.submit}
-                />
-            )
-        }
-        return (
-            <form
-                {...this.props}
-                onSubmit={this.submit}
-            >
-                <DefaultInputGroup/>
-            </form>
-        )
-    }
+  render () {
+    const { children, ...props } = this.props
+    return (
+      <form
+        {...omit(props, 'schema', 'errors', 'options')}
+        onSubmit={this.submit}
+        children={children || <DefaultElements.DefaultInputGroup />}
+      />
+    )
+  }
 }
