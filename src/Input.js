@@ -69,7 +69,7 @@ export default class Input extends Component {
       ...schema._joinedMetaData,
       required: schema._flags.presence === 'required',
       label: schema._settings.language.label,
-      placeholder: is === 'text' && schema._examples[0]
+      placeholder: is === 'text' ? schema._examples[0] : null
     }
     const options = this.optionsForSelectElem(schema)
     if (options) {
@@ -97,14 +97,13 @@ export default class Input extends Component {
           ${is} does not have a defined element type
         `
       }
-
       if (is === 'select' && get(schema, '_valids._set', []).length === 0) {
         return `
           Warning! ${name} is a select element but no valid params were provided.
         `
       }
     }
-    return null
+    return false
   }
 
   render () {
@@ -117,7 +116,7 @@ export default class Input extends Component {
       console.error(invalidation)
     }
 
-    const form = get(this, 'context.form', {})
+    const form = get(this.context, 'form', {})
     const el = typeof is === 'string' ? get(form, ['elemTypes', is], 'input') : is
     const value = form.getValue && form.getValue(name)
     const error = form.getErrors && form.getErrors(name)
