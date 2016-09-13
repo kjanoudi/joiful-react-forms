@@ -1,6 +1,5 @@
 
 import { default as get } from 'lodash.get'
-import { default as autobind } from 'autobind-decorator'
 import { Component, createElement, PropTypes } from 'react'
 
 export default class Input extends Component {
@@ -18,8 +17,17 @@ export default class Input extends Component {
   static defaultProps = {
     is: 'text'
   };
+  
+  constructor (props, context) {
+    super(props, context)
+    
+    // Bind methods
+    this.onChange = this.onChange.bind(this)
+    this.getSchema = this.getSchema.bind(this)
+    this.defaults = this.defaults.bind(this)
+    this.validateSchema = this.validateSchema.bind(this)
+  }
 
-  @autobind
   onChange (event) {
     if (event.preventDefault) {
       event.preventDefault()
@@ -34,7 +42,6 @@ export default class Input extends Component {
     }
   }
 
-  @autobind
   getSchema () {
     const { form } = this.context
     if (!form || !form.schema) {
@@ -60,7 +67,6 @@ export default class Input extends Component {
     }))
   }
 
-  @autobind
   defaults (schema, is) {
     if (!schema) {
       return {}
@@ -78,7 +84,6 @@ export default class Input extends Component {
     return defaults
   }
 
-  @autobind
   validateSchema (schema, is, name) {
     if (!schema) {
       return 'Schema is required'
