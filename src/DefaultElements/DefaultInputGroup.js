@@ -49,7 +49,7 @@ export default class JoifulDefaultInputGroup extends Component {
           return (
             <Input
               elementType={elementType}
-              fieldName={fieldSchema._joinedMetaData.name}
+              name={fieldSchema._joinedMetaData.name}
               key={key}
             />
           )
