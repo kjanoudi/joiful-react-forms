@@ -12,7 +12,6 @@ import { default as isEmpty } from 'lodash.isempty'
 import { default as flatten } from 'lodash.flatten'
 import * as DefaultElements from './DefaultElements'
 import { default as startCase } from 'lodash.startcase'
-import { default as autobind } from 'autobind-decorator'
 import { default as defaultsDeep } from 'lodash.defaultsdeep'
 import { default as React, Component, PropTypes } from 'react'
 
@@ -60,6 +59,17 @@ export default class Form extends Component {
 
     const { Input } = { ...config }
     this.elemTypes = this.getElemTypes(get(Input, 'types', {}))
+    
+    // Bind methods
+    this.getStateFromProps = this.getStateFromProps.bind(this)
+    this.getErrors = this.getErrors.bind(this)
+    this.submit = this.submit.bind(this)
+    this.getFormData = this.getFormData.bind(this)
+    this.getValue = this.getValue.bind(this)
+    this.getAllErrors = this.getAllErrors.bind(this)
+    this.onChange = this.onChange.bind(this)
+    this.onFocus = this.onFocus.bind(this)
+    this.onBlur = this.onBlur.bind(this)
   }
 
   getChildContext () {
@@ -108,7 +118,6 @@ export default class Form extends Component {
     return schema
   }
 
-  @autobind
   getStateFromProps (props) {
     const state = {
       ...this.state,
@@ -132,7 +141,6 @@ export default class Form extends Component {
     return state
   }
 
-  @autobind
   getErrors (fieldName) {
     const errors = {
       ...this.state.errors,
@@ -152,7 +160,6 @@ export default class Form extends Component {
     return errors
   }
 
-  @autobind
   submit (event) {
     if (!this.props.onSubmit) {
       return
@@ -180,12 +187,10 @@ export default class Form extends Component {
     onSubmit(errors, values, event)
   }
 
-  @autobind
   getFormData (values = {}) {
     return pick(values, keys(this.state.schema))
   }
 
-  @autobind
   getValue (fieldName) {
     const { values } = this.state
     if (fieldName && values) {
@@ -194,7 +199,6 @@ export default class Form extends Component {
     return ''
   }
 
-  @autobind
   getAllErrors () {
     const errors = {
       ...this.state.errors,
@@ -203,7 +207,6 @@ export default class Form extends Component {
     return isEmpty(errors) ? null : errors
   }
 
-  @autobind
   onChange (event, values) {
     const { checked, name, value } = event.target
 
@@ -242,7 +245,6 @@ export default class Form extends Component {
     this.setState(nextState)
   }
 
-  @autobind
   onFocus (event) {
     const { onFocus } = this.props
     if (onFocus) {
@@ -250,7 +252,6 @@ export default class Form extends Component {
     }
   }
 
-  @autobind
   onBlur (event) {
     const { name, value } = event
 

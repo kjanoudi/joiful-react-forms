@@ -1,7 +1,6 @@
 
 import React, { Component, PropTypes } from 'react'
 import { default as values } from 'lodash.values'
-import autobind from 'autobind-decorator'
 import Input from '../Input'
 
 export default class JoifulDefaultInputGroup extends Component {
@@ -14,12 +13,18 @@ export default class JoifulDefaultInputGroup extends Component {
     inputProps: PropTypes.object,
     tag: PropTypes.string
   };
+  
+  constructor (props, context) {
+    super(props, context)
+    
+    // Bind methods
+    this.getFieldSchemas = this.getFieldSchemas.bind(this)
+  }
 
   componentWillReceiveProps (nextProps, { form }) {
     this.form = form
   }
 
-  @autobind
   getFieldSchemas () {
     this.form = this.form || this.context.form
 
