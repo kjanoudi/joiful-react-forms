@@ -219,7 +219,7 @@ export default class Form extends Component {
 
     const { schema } = this.state
 
-    Joi.validate(nextState.values, schema, (err) => {
+    Joi.validate(nextState.values, schema, { abortEarly: false }, (err) => {
       if (err) {
         nextState.errors = this.parseJoiErrors(err)
       } else {
@@ -254,7 +254,7 @@ export default class Form extends Component {
       this.props.onBlur(event)
     }
 
-    Joi.validate(value, schema, (err) => {
+    Joi.validate(value, schema, { abortEarly: false }, (err) => {
       if (err) {
         this.setState({
           errors: this.parseJoiErrors(err)
