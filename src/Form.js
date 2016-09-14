@@ -253,7 +253,7 @@ export default class Form extends Component {
   }
 
   onBlur (event) {
-    const { name, value } = event
+    const { name, value } = event.target
 
     const schema = get(this.state, [schema, name], {})
 
