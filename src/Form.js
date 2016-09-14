@@ -279,6 +279,7 @@ export default class Form extends Component {
       } else {
         this.setState({
           errors: {
+            ...this.state.errors,
             [name]: null
           }
         })
