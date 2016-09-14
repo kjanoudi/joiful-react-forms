@@ -254,8 +254,7 @@ export default class Form extends Component {
 
   onBlur (event) {
     const { name, value } = event.target
-
-    const schema = get(this.state, [schema, name], {})
+    const { schema } = this.state
 
     if (typeof value === 'string' &&
       value.length === 0 &&
@@ -269,7 +268,7 @@ export default class Form extends Component {
       context: this.state.values
     }
 
-    Joi.validate(value, schema, options, (err) => {
+    Joi.validate(value, schema[name], options, (err) => {
       if (err) {
         this.setState({
           errors: {
