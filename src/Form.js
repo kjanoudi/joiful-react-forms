@@ -155,8 +155,7 @@ export default class Form extends Component {
   parseJoiErrors ({ details }) {
     const errors = {}
     details.forEach(({ path, message }) => {
-      // Humanize error
-      errors[path] = message.replace(/["]/ig, '')
+      errors[path] = message
     })
     return errors
   }
