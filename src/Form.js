@@ -221,10 +221,7 @@ export default class Form extends Component {
 
     Joi.validate(nextState.values, schema, (err) => {
       if (err) {
-        nextState.errors = {
-          ...this.state.errors,
-          ...this.parseJoiErrors(err)
-        }
+        nextState.errors = this.parseJoiErrors(err)
       } else {
         nextState.errors = {}
       }
@@ -260,10 +257,7 @@ export default class Form extends Component {
     Joi.validate(value, schema, (err) => {
       if (err) {
         this.setState({
-          errors: {
-            ...this.state.errors,
-            ...this.parseJoiErrors(err)
-          }
+          errors: this.parseJoiErrors(err)
         })
       } else {
         this.setState({
