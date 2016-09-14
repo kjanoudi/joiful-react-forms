@@ -217,25 +217,19 @@ export default class Form extends Component {
       }
     }
 
-    if (this.state.errors && this.state.errors[name]) {
-      const options = {
-        ...this.props.options,
-        context: nextState.values
-      }
+    const { schema } = this.state
 
-      const { schema } = this.state
-
-      Joi.validate(checked || value, schema[name], options, (err) => {
-        if (err) {
-          nextState.errors = {
-            ...this.state.errors,
-            ...this.parseJoiErrors(err)
-          }
-        } else {
-          delete nextState.errors[name]
+    Joi.validate(nextState.values, schema, (err) => {
+      if (err) {
+        nextState.errors = {
+          ...this.state.errors,
+          ...this.parseJoiErrors(err)
         }
-      })
-    }
+      } else {
+        nextState.errors = {}
+      }
+      this.setState(nextState)
+    })
 
     const { onChange } = this.props
     if (onChange) {
@@ -263,12 +257,7 @@ export default class Form extends Component {
       this.props.onBlur(event)
     }
 
-    const options = {
-      ...this.props.options,
-      context: this.state.values
-    }
-
-    Joi.validate(value, schema[name], options, (err) => {
+    Joi.validate(value, schema, (err) => {
       if (err) {
         this.setState({
           errors: {
@@ -278,10 +267,7 @@ export default class Form extends Component {
         })
       } else {
         this.setState({
-          errors: {
-            ...this.state.errors,
-            [name]: null
-          }
+          errors: {}
         })
       }
     })
