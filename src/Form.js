@@ -276,6 +276,12 @@ export default class Form extends Component {
             ...this.parseJoiErrors(err)
           }
         })
+      } else {
+        this.setState({
+          errors: {
+            [name]: null
+          }
+        })
       }
     })
 
