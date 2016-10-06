@@ -247,10 +247,10 @@ export default class Form extends Component {
     const { name, value } = event.target
     const { schema } = this.state
 
-    if (typeof value === 'string' &&
+    if (this.props.onBlur &&
       value.length === 0 &&
-      schema._flags.presence !== 'required' &&
-      this.props.onBlur) {
+      typeof value === 'string' &&
+      get(schema, '_flags.presence') !== 'required') {
       this.props.onBlur(event)
     }
 
