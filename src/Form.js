@@ -217,25 +217,16 @@ export default class Form extends Component {
       }
     }
 
-    if (this.state.errors && this.state.errors[name]) {
-      const options = {
-        ...this.props.options,
-        context: nextState.values
+    const { schema } = this.state
+
+    Joi.validate(nextState.values, schema, { abortEarly: false }, (err) => {
+      if (err) {
+        nextState.errors = this.parseJoiErrors(err)
+      } else {
+        nextState.errors = {}
       }
-
-      const { schema } = this.state
-
-      Joi.validate(checked || value, schema[name], options, (err) => {
-        if (err) {
-          nextState.errors = {
-            ...this.state.errors,
-            ...this.parseJoiErrors(err)
-          }
-        } else {
-          delete nextState.errors[name]
-        }
-      })
-    }
+      this.setState(nextState)
+    })
 
     const { onChange } = this.props
     if (onChange) {
@@ -253,9 +244,8 @@ export default class Form extends Component {
   }
 
   onBlur (event) {
-    const { name, value } = event
-
-    const schema = get(this.state, [schema, name], {})
+    const { name, value } = event.target
+    const { schema } = this.state
 
     if (typeof value === 'string' &&
       value.length === 0 &&
@@ -264,18 +254,14 @@ export default class Form extends Component {
       this.props.onBlur(event)
     }
 
-    const options = {
-      ...this.props.options,
-      context: this.state.values
-    }
-
-    Joi.validate(value, schema, options, (err) => {
+    Joi.validate(value, schema, { abortEarly: false }, (err) => {
       if (err) {
         this.setState({
-          errors: {
-            ...this.state.errors,
-            ...this.parseJoiErrors(err)
-          }
+          errors: this.parseJoiErrors(err)
+        })
+      } else {
+        this.setState({
+          errors: {}
         })
       }
     })
