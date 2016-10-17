@@ -58,7 +58,7 @@ export default class Form extends Component {
     }
 
     const { Input } = { ...config }
-    this.elemTypes = this.getElemTypes(get(Input, 'types', {}))
+    this.elemTypes = this.getElemTypes(props.elementTypes || get(Input, 'types', {}))
     
     // Bind methods
     this.getStateFromProps = this.getStateFromProps.bind(this)
