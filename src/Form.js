@@ -132,7 +132,7 @@ export default class Form extends Component {
         schema._tags = uniq(flatten(toArray(schema._tags).concat(name)))
         schema = this.setLabel(schema, name)
         state.keyMap[schema._settings.language.label] = name
-        state.values[name] = get(props, ['values', name]) || schema._flags.default
+        state.values[name] = schema._flags.default || get(props, ['values', name])
         if (state.values[name] === undefined && schema._type === 'boolean') {
           state.values[name] = false
         }
